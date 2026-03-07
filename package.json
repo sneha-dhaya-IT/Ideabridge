@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:rls": "vitest run tests/rls-policies.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
@@ -20,6 +22,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^18.3.28",
@@ -28,6 +31,7 @@
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.18"
   }
 }

@@ -26,6 +26,14 @@ export type CommentTreeNode = CommentRow & {
 export async function fetchCommentsByProjectId(
   projectId: string,
 ): Promise<CommentRow[]> {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    console.warn("[fetchCommentsByProjectId] Supabase env vars not set");
+    return [];
+  }
+
   const supabase = createSupabaseServerClient();
 
   const { data, error } = await supabase
