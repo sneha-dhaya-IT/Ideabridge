@@ -233,4 +233,4 @@
 
 - **Platform:** Vercel
 - **GitHub Integration:** Auto-deploys from `feature/member2-idea-guidance` branch
-- **Live URL:** *(to be filled after deployment)*
+- **Live URL:** https://project-fawn-six-84.vercel.app
