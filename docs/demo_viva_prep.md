@@ -1,238 +1,269 @@
-# 🎯 PP1 Demo & Viva Preparation — Idea Guidance Module
+# Demo & Viva Preparation — Idea Guidance Module (Member 2)
 
-> **Your module:** Idea & Guidance Component | **Time limit:** 2 minutes | **Worth:** 9% of unit marks
-
----
-
-## 📋 Demo Flow (2 minutes)
-
-### Suggested Script (practice this!)
-
-**Step 1 — Post Form (40 sec)**
-> "This is the Project Idea Submission form. Let me show the validations first."
-1. Go to `http://localhost:3000/posts/new`
-2. Click **Submit Idea** empty → show 3 validation errors (Title, Problem, Variant)
-3. Type short title "test" → click Submit → show "Title must be at least 10 characters"
-4. Fill everything properly → click Submit → show success banner with JSON data
-
-**Step 2 — Feedback Thread (30 sec)**
-> "Here is the Feedback thread — a recursive comment tree with Markdown and code highlighting."
-1. Go to `/feedback`
-2. Point out: **OP badge**, **Mentor badge**, nested replies, code syntax highlighting
-3. Click **Upvote** → toggle blue state
-4. Click **Mark Accepted** → toggle green state
-
-**Step 3 — Guidance Thread (30 sec)**
-> "And the Guidance thread page where mentors provide feedback on project ideas."
-1. Go to `/guidance/1`
-2. Show mentor comments with dates, nested student replies
-3. Show code blocks rendering with syntax highlighting
-4. Click Upvote/Accept
-
-**Step 4 — Wrap up (20 sec)**
-> "Tech stack: Next.js 14, React, TypeScript, Zod validation, Tailwind CSS. The comment tree uses a recursive O(n) algorithm to build nested comments from a flat array."
+**Date:** March 28, 2026 | **Component:** Idea & Guidance Module
 
 ---
 
-## 🧠 Viva Questions & Answers
+## 2-Minute Demo Script
 
-### Q1: "What validation library are you using and why?"
+### Step 1 — Project Idea Form (`/posts/new`)
+1. Open `http://localhost:3001/posts/new`
+2. Click **Submit Idea** without filling anything → show red inline errors for Title, Problem Statement, Variant
+3. Type "test" in Title → show **"Title must be at least 10 characters"**
+4. Fill the form:
+   - Title: *Smart Campus IoT Monitoring System*
+   - Problem Statement: *Universities lack real-time monitoring…*
+   - Variant: **Prototype**
+   - Add a URL: `https://github.com/example`
+   - Click tags: **Next.js**, **TypeScript**, **Supabase**
+5. Click **Submit Idea** → show the green success banner with submitted JSON
 
-> **Answer:** I'm using **Zod** for schema-based validation. It's defined in `schema.ts`. Zod gives type-safe validation — the schema defines rules like `min(10)` for the title, and it returns structured error objects with field-level messages. It integrates well with TypeScript because it infers types from the schema using `z.infer<typeof postFormSchema>`.
+### Step 2 — Feedback Thread (`/feedback`)
+1. Navigate to `http://localhost:3001/feedback`
+2. Show the existing **recursive comment tree**: OP question → Mentor reply → OP reply → peer reply
+3. Point out **role badges**: "OP" (blue), "Mentor" (amber), and indented nesting
+4. Show **Markdown rendering**: bold text, inline `code`, syntax-highlighted code block
+5. In the **"Add a Comment"** form: set name to your name, role to "Student", type a comment with `**bold**` text, click **Post Comment** → show it appears at the bottom of the tree
+6. Click **Reply** on the OP's root comment → show the **inline reply form** expanding
+7. Type a reply → click **Post Reply** → show it nested one level under
+8. Click **Upvote** on a comment → show blue toggle; click **Mark Accepted** → show green toggle
 
-**Code location:** [schema.ts](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/post-form/schema.ts)
+### Step 3 — Guidance Thread (`/guidance/1`)
+1. Navigate to `http://localhost:3001/guidance/1`
+2. Show mentor code block with syntax highlighting and date stamps
+3. Post a comment from the "Add Guidance Comment" form
+4. Click Reply on Dr. Fernando's mentor comment → show inline reply form
+5. Mention it uses a dynamic route: any `/guidance/[projectId]` URL works
 
+---
+
+## Viva Questions & Model Answers
+
+### Q1: What is Zod and why do you use it instead of plain `if` checks?
+
+**Answer:** Zod is a TypeScript-first schema validation library. Instead of writing manual `if (!title || title.length < 10)` checks, I define the schema once:
 ```ts
 export const postFormSchema = z.object({
-  title: z.string().trim().min(1, "Title is required").min(10, "Title must be at least 10 characters"),
-  problemStatement: z.string().trim().min(1, "Problem statement is required"),
-  urls: z.array(urlItem).default([]),
-  techStacks: z.array(z.enum(TECH_TAGS)).default([]),
-  variant: z.enum(PROJECT_VARIANTS, { message: "Please select a project variant" }),
+  title: z.string().trim().min(10, "Title must be at least 10 characters"),
+  problem_statement: z.string().trim().min(1, "Problem statement is required"),
+  variant: z.enum(["Research", "Prototype", "Capstone", "Mini-project"]),
 });
 ```
+Then call `postFormSchema.safeParse(data)` — it returns `{ success, data, error }`. This is type-safe, reusable, and auto-generates typed error messages. Much cleaner and less error-prone than manual checks.
 
 ---
 
-### Q2: "How does the form submission work?"
+### Q2: What is `useFormState` and how does it connect to your form action?
 
-> **Answer:** The form uses React's `useFormState` hook. When the user clicks Submit, the `formAction` runs the validation through the Zod schema using `safeParse()`. If validation fails, it returns `{ ok: false, fieldErrors: {...} }` and the error messages are displayed under each field. If it passes, it returns `{ ok: true }` with the data.
-
-**Code location:** [PostForm.tsx](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/post-form/PostForm.tsx) (lines 20-47)
-
+**Answer:** `useFormState` (from `react-dom`) is a React hook that wraps a server action (or client action) and manages the state returned from it. In my `PostFormClient.tsx`:
 ```ts
-const parsed = postFormSchema.safeParse({
-  title: formData.get("title"),
-  problemStatement: formData.get("problemStatement"),
-  // ...
-});
-
-if (!parsed.success) {
-  const flattened = parsed.error.flatten();
-  return { ok: false, fieldErrors: flattened.fieldErrors };
-}
+const [state, formAction] = useFormState(demoAction, { message: null, errors: {} });
 ```
+- `state` holds the latest `{ message, errors }` returned by the action
+- `formAction` is passed to `<form action={formAction}>`
+- On submit, the action runs, returns new state, React re-renders with errors or success message
 
 ---
 
-### Q3: "What is `useFormState` and `useFormStatus`?"
+### Q3: What is `useFormStatus` and how does it prevent double submission?
 
-> **Answer:**
-> - `useFormState` is a React hook that manages server/client action state. It takes an action function and initial state, returns current state and a form action. Each time the form submits, it calls the action with previous state and FormData.
-> - `useFormStatus` gives the pending state of a form submission — I use it in the `SubmitButton` component to show "Submitting…" and disable the button while processing.
-
-**Code location:** [PostFormClient.tsx](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/post-form/PostFormClient.tsx) (lines 4, 24-36, 91-93)
-
----
-
-### Q4: "What is `'use client'` directive?"
-
-> **Answer:** In Next.js 14, all components are **Server Components** by default. They render on the server and can't use hooks like `useState`, `useEffect`, or browser APIs. The `"use client"` directive marks a component as a **Client Component** — it runs in the browser and can use React hooks, event handlers, and manage interactive state. For example, `PostFormClient.tsx` and `CommentNode.tsx` need `"use client"` because they use `useState` for upvote/accept toggling.
+**Answer:** `useFormStatus` is a React hook that reads the pending state of the closest parent `<form>`. In the submit button component:
+```ts
+const { pending } = useFormStatus();
+<button disabled={pending}>{pending ? "Submitting…" : "Submit Idea"}</button>
+```
+While the form action is running, `pending` is `true`, so the button is disabled and shows "Submitting…". This prevents the user from clicking submit multiple times.
 
 ---
 
-### Q5: "How does the comment tree work?"
+### Q4: Explain the tree building algorithm in `buildCommentTree()`.
 
-> **Answer:** I use a **two-pass O(n) algorithm** in `buildCommentTree()`:
-> 1. **Pass 1 (Index):** Loop through the flat array of comments and store each in a `Map<string, CommentTreeNode>` keyed by `id`, with an empty `children` array
-> 2. **Pass 2 (Link):** Loop through the map — if a node has a `parent_id`, push it into its parent's `children` array. If no parent, it's a root node.
->
-> This builds a nested tree from flat data in O(n) time — no recursion needed for building.
+**Answer:** Input is a **flat array** of comments. The algorithm builds a **nested tree** in O(n) time using two passes:
 
-**Code location:** [types.ts](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/feedback-thread/types.ts) (lines 14-31)
+1. **Pass 1 — Index:** Loop through all comments, add each to a `Map<id, CommentNode>` with an empty `children: []` array.
+2. **Pass 2 — Link:** Loop through the map. If a node's `parent_id` is in the map, push it into the parent's `children` array. Otherwise, it's a root node.
 
 ```ts
 export function buildCommentTree(comments: Comment[]): CommentNode[] {
   const map = new Map<string, CommentNode>();
   const roots: CommentNode[] = [];
-  for (const c of comments) { map.set(c.id, { ...c, children: [] }); }     // Pass 1
-  for (const node of map.values()) {                                         // Pass 2
-    if (node.parent_id && map.has(node.parent_id)) {
+  for (const c of comments) map.set(c.id, { ...c, children: [] });
+  for (const node of map.values()) {
+    if (node.parent_id && map.has(node.parent_id))
       map.get(node.parent_id)!.children.push(node);
-    } else { roots.push(node); }
+    else roots.push(node);
   }
   return roots;
 }
 ```
+This runs in O(n) — only two linear passes regardless of depth.
 
 ---
 
-### Q6: "How does the recursive rendering work for nested comments?"
+### Q5: How does the Reply button add a nested comment?
 
-> **Answer:** The `CommentNode` component renders itself recursively. It displays the current comment's content, then if that comment has `children`, it maps over them and renders `<CommentNode>` again with `depth + 1`. The `depth` prop controls the left indentation (`ml-6`) and the border-left line.
+**Answer:** Each `InteractiveCommentNode` has local state `showReplyForm` (boolean). Clicking "Reply" sets it to `true`, revealing the inline form. On "Post Reply", the component calls `onReply(content, node.id, role, author)` — a callback passed down from the parent `InteractiveFeedback`. That callback creates a new comment object with `parent_id = node.id` and appends it to the flat `comments` state array. On the next render, `buildCommentTree()` runs again and the new comment appears nested under the right parent.
 
-**Code location:** [CommentNode.tsx](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/feedback-thread/CommentNode.tsx) (lines 124-135)
+---
 
+### Q6: How does recursive rendering work in `InteractiveCommentNode`?
+
+**Answer:** The component renders itself recursively for its children:
 ```tsx
-{node.children.length > 0 && (
-  <div className="mt-3 space-y-3">
-    {node.children.map((child) => (
-      <CommentNode key={child.id} node={child} isOP={isOP} depth={depth + 1} />
-    ))}
-  </div>
-)}
+{node.children.map((child) => (
+  <InteractiveCommentNode
+    key={child.id}
+    node={child}
+    depth={depth + 1}
+    onReply={onReply}
+    ...
+  />
+))}
 ```
+Each level adds `ml-6 border-l-2 border-blue-100 pl-4` for indentation. React handles the recursion — there's no explicit stack. Unlimited depth is supported because each call is just a React component render.
 
 ---
 
-### Q7: "How does Markdown rendering and code highlighting work?"
+### Q7: What is the difference between a Server Component and a Client Component in Next.js 14?
 
-> **Answer:** I use `react-markdown` with the `remark-gfm` plugin for GitHub-flavored Markdown (bold, links, lists, etc.). For code blocks, I use a custom `code` component that checks if the className contains a language tag (like `language-tsx`). If it does, it renders with `SyntaxHighlighter` from `react-syntax-highlighter` using the `oneLight` theme. Inline code gets a simple blue background style.
+**Answer:**
 
-**Code location:** [CommentNode.tsx](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/feedback-thread/CommentNode.tsx) (lines 52-84)
+| | Server Component | Client Component |
+|---|---|---|
+| **Directive** | None (default) | `"use client"` at top |
+| **Runs** | Server only (Node.js) | Browser (hydrated) |
+| **Can use hooks** | No | Yes (`useState`, `useEffect`) |
+| **Can be async** | Yes | No |
+| **Example in my code** | `guidance/[projectId]/page.tsx` (fetches data) | `InteractiveFeedback.tsx` (manages state) |
+
+In my system: the guidance `page.tsx` is a Server Component that `await`s data, then passes it as props to the client `InteractiveGuidanceClient` for interactive features.
 
 ---
 
-### Q8: "How does the TagPicker work?"
+### Q8: How does `TagPicker` serialize selected tags for the form?
 
-> **Answer:** It uses a `Set<string>` in `useState` to track selected tags. Clicking a tag toggles it (add/delete from Set). The selected tags are serialized as JSON into a hidden `<input>` field, so they get submitted with the form's `FormData`. The visual toggle is controlled by the `isSelected` check — selected tags get blue background, unselected get white.
-
-**Code location:** [TagPicker.tsx](file:///c:/Users/akshayan/Documents/sliit/itpm/project/src/components/post-form/TagPicker.tsx)
-
----
-
-### Q9: "What is the `PostFormState` discriminated union type?"
-
-> **Answer:** It's a **TypeScript discriminated union** — the `ok` field acts as a discriminant:
-> - `{ ok: false, fieldErrors?, formError? }` — validation failed
-> - `{ ok: true, message, insertedRow }` — success
->
-> This means TypeScript can narrow the type: when I check `state.ok`, it knows which properties are available.
-
+**Answer:** `TagPicker` maintains a `Set<string>` in `useState`. Each tag pill's `onClick` calls:
 ```ts
-type PostFormState =
-  | { ok: false; fieldErrors?: Record<string, string[]>; formError?: string; }
-  | { ok: true; message: string; insertedRow: Record<string, unknown>; };
+setSelected(prev => {
+  const next = new Set(prev);
+  next.has(tag) ? next.delete(tag) : next.add(tag);
+  return next;
+});
 ```
+A hidden `<input type="hidden" name="tech_stack" value={JSON.stringify([...selected])} />` is kept in sync via `useEffect`. When the form submits, the hidden input's JSON string value is part of the `FormData`. The server action parses it with `JSON.parse`.
 
 ---
 
-### Q10: "What is the difference between Server Components and Client Components in your code?"
+### Q9: Why is the feedback page a fully client-side component (`"use client"`)? Why not server-side?
 
-> **Answer:** 
-> | | Server Component | Client Component |
-> |---|---|---|
-> | **Example** | `FeedbackThread.tsx`, `GuidanceThread.tsx` | `CommentNode.tsx`, `PostFormClient.tsx` |
-> | **Runs on** | Server only | Browser (hydrated) |
-> | **Can use hooks?** | ❌ No | ✅ Yes |
-> | **Can be async?** | ✅ Yes (data fetching) | ❌ No |
-> | **Directive** | Default (no directive) | `"use client"` |
->
-> `GuidanceThread` is a Server Component — it fetches data and builds the tree. Then it passes the tree to `GuidanceCommentNode` (Client Component) which handles interactive state like upvote/accept.
+**Answer:** The feedback page needs to manage **interactive state** that changes without a page reload:
+- `useState` for the flat comments array (grows as user posts)
+- `useState` for per-comment upvote/accept toggles
+- Reply form open/close states per comment
+
+Server Components can't use `useState` or handle events. Since the data for this page is seeded (mock data, no database), there's no server-side fetch needed, so the entire page being a Client Component is appropriate.
 
 ---
 
-### Q11: "What tech stack are you using?"
+### Q10: What is `useCallback` and why do you use it in `InteractiveFeedback`?
 
-> **Answer:** **Next.js 14** (React framework with App Router), **React 18** (UI library), **TypeScript** (type safety), **Zod** (validation), **Tailwind CSS** (utility-first styling). For Markdown rendering: `react-markdown` + `remark-gfm` + `react-syntax-highlighter`.
-
----
-
-### Q12: "Why did you separate PostForm and PostFormClient?"
-
-> **Answer:** This follows the **server/client component composition pattern** in Next.js 14. `PostForm.tsx` handles the action logic and passes it as a prop to `PostFormClient.tsx` (the interactive form). This separation keeps the action logic separate from the UI rendering, and allows the Server Component to pass server actions to Client Components.
-
----
-
-## 🚀 Demo Day Checklist
-
-- [ ] Run `npm run dev` in the project folder before the demo
-- [ ] Have browser ready at `http://localhost:3000/posts/new`
-- [ ] Pre-fill some form data ready (use tips from the PDF: "you may populate forms with meaningful dummy data using button clicks")
-- [ ] Bring HDMI convertor for projector
-- [ ] Be at venue **10 minutes early**
-- [ ] Practice the 2-minute script above at least 3 times
-- [ ] Keep explanations short — the lecturer will interrupt at 2 minutes
-
----
-
-## 📂 Project Structure (Know This!)
-
+**Answer:** `useCallback` memoizes a function reference. In `InteractiveFeedback`:
+```ts
+const addComment = useCallback((content, parentId, role, author) => {
+  setComments(prev => [...prev, { id: ..., parent_id: parentId, ... }]);
+}, [projectId]);
 ```
-src/
-├── app/
-│   ├── layout.tsx          ← Root layout (Server Component)
-│   ├── page.tsx            ← Home page
-│   ├── globals.css         ← Global styles
-│   ├── posts/new/page.tsx  ← Post form page
-│   ├── feedback/page.tsx   ← Feedback thread page
-│   └── guidance/[projectId]/page.tsx  ← Dynamic guidance page
-├── components/
-│   ├── post-form/
-│   │   ├── PostForm.tsx       ← Wrapper (passes action to client)
-│   │   ├── PostFormClient.tsx ← Interactive form (useFormState)
-│   │   ├── TagPicker.tsx      ← Multi-select tag picker
-│   │   └── schema.ts         ← Zod validation schema
-│   ├── feedback-thread/
-│   │   ├── FeedbackThread.tsx ← Server Component (builds tree)
-│   │   ├── CommentNode.tsx    ← Recursive client renderer
-│   │   ├── CommentNodeClient.tsx ← Client wrapper
-│   │   └── types.ts           ← Types + tree builder algorithm
-│   └── guidance-thread/
-│       ├── GuidanceThread.tsx      ← Server Component
-│       ├── GuidanceCommentNode.tsx ← Recursive client renderer
-│       └── data.ts                ← Types + data fetch + tree builder
-```
+Without `useCallback`, a new `addComment` function reference would be created on every render. Since `addComment` is passed as a prop to every `InteractiveCommentNode`, each child would re-render unnecessarily. `useCallback` prevents this by returning the same function reference unless `projectId` changes.
 
-> [!TIP]
-> **Key concept to remember:** "Flat data → O(n) tree builder → Recursive React components"
+---
+
+### Q11: How does Markdown + syntax highlighting work in comment bodies?
+
+**Answer:** I use three libraries:
+1. **`react-markdown`** — renders the comment string as React elements from Markdown AST
+2. **`remark-gfm`** — plugin enabling GitHub-Flavored Markdown (bold, links, tables, strikethrough)
+3. **`react-syntax-highlighter` (Prism)** — handles the `code` renderer override
+
+In the `components` override passed to `ReactMarkdown`:
+```tsx
+code({ className, children }) {
+  const match = /language-(\w+)/.exec(className || "");
+  if (match) return <SyntaxHighlighter style={oneLight} language={match[1]}>...</SyntaxHighlighter>;
+  return <code className="rounded bg-blue-50 px-1">{children}</code>;
+}
+```
+Fenced code blocks get syntax-highlighted; inline `code` gets a simple styled `<code>` tag.
+
+---
+
+### Q12: Where exactly is the Zod validation happening — client side or server side?
+
+**Answer:** In the current demo build, validation happens **client-side** inside `demoAction` in `PostForm.tsx`:
+```ts
+async function demoAction(prevState: PostFormState, formData: FormData) {
+  const result = postFormSchema.safeParse({ title, problem_statement, variant, ... });
+  if (!result.success) {
+    return { message: null, errors: result.error.flatten().fieldErrors };
+  }
+  return { message: "Project idea submitted successfully! (Demo mode)", errors: {} };
+}
+```
+In the full production version, this same Zod schema runs in a **Next.js Server Action** (`actions.ts`) — so validation happens server-side before any database insert. The schema file (`schema.ts`) is shared between both.
+
+---
+
+### Q13: How does the inline reply form know which comment to nest the reply under?
+
+**Answer:** Each `InteractiveCommentNode` receives its own `node.id`. When the user posts a reply, `onReply` is called with that specific `node.id` as `parentId`. The new comment object is:
+```ts
+{ id: `c-${Date.now()}`, parent_id: node.id, content, role, author }
+```
+This gets appended to the global flat array. On re-render, `buildCommentTree()` finds this comment has `parent_id === node.id`, so it pushes it into that node's `children` array — making it appear nested under exactly the comment the user replied to.
+
+---
+
+## Demo Day Checklist
+
+- [ ] Dev server running: `npm run dev` → `http://localhost:3001`
+- [ ] Open `/posts/new` → verify form loads
+- [ ] Click Submit on empty form → verify three red error messages
+- [ ] Type short title "test" → verify min-length error
+- [ ] Fill full form → submit → verify green success banner + JSON
+- [ ] Open `/feedback` → verify existing comment tree renders
+- [ ] Post a new comment → verify it appears in the thread
+- [ ] Click Reply on a comment → verify inline form expands
+- [ ] Post a reply → verify it nests under the comment
+- [ ] Toggle Upvote (blue) and Mark Accepted (green)
+- [ ] Open `/guidance/1` → verify mentor comments with date stamps + code blocks
+- [ ] Post a guidance comment → verify it appears
+- [ ] Click Reply on Dr. Fernando's comment → verify inline form
+- [ ] Be ready to show `schema.ts`, `buildCommentTree()`, `InteractiveFeedback.tsx`, `InteractiveCommentNode.tsx`
+
+---
+
+## New Files Added (Latest Update)
+
+| File | Purpose |
+|---|---|
+| `src/components/feedback-thread/InteractiveFeedback.tsx` | Root comment form + flat state array management |
+| `src/components/feedback-thread/InteractiveCommentNode.tsx` | Comment with Reply button + inline reply form |
+| `src/components/guidance-thread/InteractiveGuidance.tsx` | Same as above for guidance thread |
+| `src/components/guidance-thread/InteractiveGuidanceNode.tsx` | Same as above for guidance thread |
+| `src/app/guidance/[projectId]/InteractiveGuidanceClient.tsx` | Client bridge between server page and interactive component |
+
+---
+
+## Key Code Locations for Viva
+
+| Topic | File | Line(s) |
+|---|---|---|
+| Zod schema definition | `src/components/post-form/schema.ts` | All |
+| Zod validation in action | `src/components/post-form/PostForm.tsx` | `demoAction` function |
+| useFormState hook | `src/components/post-form/PostFormClient.tsx` | Top of component |
+| useFormStatus hook | `src/components/post-form/PostFormClient.tsx` | `SubmitButton` sub-component |
+| buildCommentTree algorithm | `src/components/feedback-thread/types.ts` | `buildCommentTree()` |
+| Interactive state (add comment) | `src/components/feedback-thread/InteractiveFeedback.tsx` | `addComment` + `useState` |
+| Reply form logic | `src/components/feedback-thread/InteractiveCommentNode.tsx` | `showReplyForm` + `handleReply` |
+| Markdown + syntax highlight | `src/components/feedback-thread/InteractiveCommentNode.tsx` | `<ReactMarkdown>` block |
+| Server → Client data pass | `src/app/guidance/[projectId]/page.tsx` → `InteractiveGuidanceClient.tsx` | Props pattern |
+| TagPicker serialization | `src/components/post-form/TagPicker.tsx` | `hidden input` + `useEffect` |

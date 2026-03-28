@@ -13,7 +13,7 @@
 | **Student Name** | Akshayan |
 | **Registration Number** | *(fill in your SLIIT reg. no.)* |
 | **Responsible Component(s)** | Idea & Guidance Module (Member 2) |
-| **Description** | A web module that lets students submit project ideas with form validation, receive recursive threaded feedback from mentors and peers with Markdown/code support, and view guidance threads per project with upvote and accept interactions. |
+| **Description** | A web module that lets students submit project ideas with form validation, receive recursive threaded feedback from mentors and peers with Markdown/code support, and view/post guidance comments per project with upvote, accept, and nested reply interactions. |
 
 ---
 
@@ -21,15 +21,18 @@
 
 | # | UI Screen | Route | Screenshot |
 |---|---|---|---|
-| UI 1 | Project Idea Submission Form (Empty) | `/posts/new` | `screenshots/01-post-form-empty.png` |
+| UI 1 | Project Idea Form (Empty) | `/posts/new` | `screenshots/01-post-form-empty.png` |
 | UI 2 | Form Validation Errors | `/posts/new` (invalid submit) | `screenshots/02-validation-errors.png` |
 | UI 3 | Title Minimum-Length Validation | `/posts/new` (short title) | `screenshots/03-title-min-length-error.png` |
 | UI 4 | Form Filled with Valid Data | `/posts/new` (completed) | `screenshots/04-form-filled.png` |
 | UI 5 | Successful Submission | `/posts/new` (submitted) | `screenshots/05-form-success.png` |
-| UI 6 | Feedback Thread (Comment Tree) | `/feedback` | `screenshots/06-feedback-thread.png` |
-| UI 7 | Feedback Upvote & Accept Interactions | `/feedback` (toggled) | `screenshots/07-feedback-upvote-accept.png` |
-| UI 8 | Guidance Thread | `/guidance/[projectId]` | `screenshots/08-guidance-thread.png` |
-| UI 9 | Guidance Thread Interactions | `/guidance/[projectId]` (toggled) | `screenshots/09-guidance-interactions.png` |
+| UI 6 | Feedback Thread (Read + Interact) | `/feedback` | `screenshots/10-feedback-interactive-form.png` |
+| UI 7 | Feedback — Typing a Comment | `/feedback` | `screenshots/11-feedback-typed.png` |
+| UI 8 | Feedback — Comment Posted | `/feedback` | `screenshots/12-feedback-posted.png` |
+| UI 9 | Feedback — Inline Reply Form | `/feedback` | `screenshots/13-feedback-reply-form.png` |
+| UI 10 | Feedback — Nested Reply Posted | `/feedback` | `screenshots/14-feedback-reply-posted.png` |
+| UI 11 | Guidance Thread (Interactive) | `/guidance/[projectId]` | `screenshots/15-guidance-interactive.png` |
+| UI 12 | Guidance — Inline Reply Form | `/guidance/[projectId]` | `screenshots/16-guidance-reply-form.png` |
 
 ---
 
@@ -45,158 +48,198 @@
 |---|---|---|---|
 | F-1 | **Title** | Text input | Descriptive title for the project idea |
 | F-2 | **Problem Statement** | Textarea | Multi-line description of the problem |
-| F-3 | **Project Variant** | Select dropdown | One of: Research, Prototype, Capstone, Mini-project |
+| F-3 | **Project Variant** | Select dropdown | Research / Prototype / Capstone / Mini-project |
 | F-4 | **URLs** | Dynamic URL list | Reference links (add/remove dynamically) |
-| F-5 | **Tech Stacks** | Tag Picker (multi-select) | Technology tags: Next.js, React, TypeScript, Tailwind CSS, Supabase, PostgreSQL, Prisma, Node.js |
+| F-5 | **Tech Stacks** | Tag Picker (multi-select) | Next.js, React, TypeScript, Tailwind CSS, Supabase, PostgreSQL, Prisma, Node.js |
 
 ### B) Validation Rules (Zod Schema)
 
 | # | Field | Rule | Error Message |
 |---|---|---|---|
-| VR-1 | **Title** | Required. Minimum 10 characters. Trimmed whitespace. | "Title is required" / "Title must be at least 10 characters" |
+| VR-1 | **Title** | Required. Minimum 10 characters. Trimmed. | "Title is required" / "Title must be at least 10 characters" |
 | VR-2 | **Problem Statement** | Required. Non-empty string. Trimmed. | "Problem statement is required" |
-| VR-3 | **Project Variant** | Required. Must be one of the 4 allowed values. | "Please select a project variant" |
+| VR-3 | **Project Variant** | Required. Must be one of 4 allowed values. | "Please select a project variant" |
 | VR-4 | **URLs** | Optional. Each entry must be valid URL format. | "Each URL must be valid (e.g. https://…)" |
 | VR-5 | **Tech Stacks** | Optional. Values must be from predefined list. | — |
-| VR-6 | **All fields** | Validation uses Zod `safeParse()`. Errors shown inline below each field in red. | — |
+| VR-6 | **All fields** | Validated via Zod `safeParse()`. Errors shown inline in red below each field. | — |
 
 ### C) Validation Error Screenshots
 
-![Validation Errors - All Fields](screenshots/02-validation-errors.png)
+![Validation Errors](screenshots/02-validation-errors.png)
 
-*Empty form submission triggers: "Title is required", "Problem statement is required", "Please select a project variant"*
+*Empty submit → "Title is required", "Problem statement is required", "Please select a project variant"*
 
 ![Title Min-Length Error](screenshots/03-title-min-length-error.png)
 
-*Short title ("test") triggers: "Title must be at least 10 characters"*
+*Short title ("test") → "Title must be at least 10 characters"*
 
-### D) Process / Workflow Rules
+### D) Workflow Rules
 
 | # | Rule |
 |---|---|
-| WF-1 | User fills in form fields → clicks "Submit Idea" → Zod schema validates all fields → if valid, returns success response with submitted data. |
-| WF-2 | On successful submission, a green success banner appears showing the submitted data in JSON format. |
-| WF-3 | On validation failure, the form re-renders with inline red error messages below each invalid field. Previously entered valid data is preserved. |
-| WF-4 | The submit button shows "Submitting…" and is disabled while processing (`useFormStatus` hook), preventing double submissions. |
-
-### E) Successful Submission
+| WF-1 | User fills fields → clicks "Submit Idea" → Zod validates → if valid, returns success. |
+| WF-2 | Success: green banner displays submitted data in JSON format. |
+| WF-3 | Failure: form re-renders inline red errors. Entered data is preserved. |
+| WF-4 | Submit button shows "Submitting…" and disables during processing (`useFormStatus`). |
 
 ![Form Filled](screenshots/04-form-filled.png)
-
-*Filled form with title, problem statement, Prototype variant, and 4 selected tech tags*
-
 ![Submission Success](screenshots/05-form-success.png)
 
-*Success banner: "Project idea submitted successfully!" with JSON output showing all submitted data*
-
-### F) Tag Picker Interaction Rules
+### E) Tag Picker Rules
 
 | # | Rule |
 |---|---|
-| TP-1 | Tags are displayed as pill-shaped buttons in a horizontal row. |
-| TP-2 | Clicking a tag toggles it: unselected (white, outlined) → selected (blue filled). |
-| TP-3 | A counter shows "N selected" in real-time. |
-| TP-4 | Selected tags are serialized as a JSON array in a hidden input field for form submission. |
-| TP-5 | Tag state is managed using a `Set<string>` in `useState`. |
+| TP-1 | Tags displayed as pill-shaped buttons. Click toggles selected (blue) / unselected (white). |
+| TP-2 | Counter shows "N selected" in real-time. |
+| TP-3 | Selected tags serialized as JSON in hidden input for form submission. |
+| TP-4 | Tag state managed using `Set<string>` in `useState`. |
 
-### G) URL List Interaction Rules
+### F) URL List Rules
 
 | # | Rule |
 |---|---|
-| UL-1 | The form starts with one empty URL input. |
-| UL-2 | Click "+ Add another URL" to add additional inputs dynamically. |
-| UL-3 | Each input after the first shows a red "×" button to remove that entry. |
-| UL-4 | A counter shows "N added" counting only non-empty URLs. |
-| UL-5 | Non-empty URLs are serialized as JSON in a hidden input for submission. |
+| UL-1 | Form starts with one empty URL input. |
+| UL-2 | "+ Add another URL" adds inputs dynamically. |
+| UL-3 | Each input (after first) has a red "×" remove button. |
+| UL-4 | Counter shows "N added" for non-empty URLs. |
 
 ---
 
-## UI 3: Feedback Thread — Comment Tree (`/feedback`)
+## UI 3: Feedback Thread — Interactive Comment Tree (`/feedback`)
 
-**Screenshots:** `06-feedback-thread.png`, `07-feedback-upvote-accept.png`
+**Screenshots:** `10-feedback-interactive-form.png` through `14-feedback-reply-posted.png`
 
-![Feedback Thread](screenshots/06-feedback-thread.png)
+![Feedback Interactive](screenshots/10-feedback-interactive-form.png)
 
 ### A) Display Rules
 
 | # | Rule |
 |---|---|
-| DR-1 | Comments are rendered as a **recursive tree**. Root comments appear at top level; replies are indented with a left blue border line (`border-l-2 border-blue-100 ml-6 pl-4`). |
-| DR-2 | Nesting depth is **unlimited** — replies to replies render at increasing indentation. |
-| DR-3 | **Mentor** comments display a gold/amber badge ("Mentor") next to the author name. |
-| DR-4 | **OP** (Original Poster) comments display a blue badge ("OP") next to the author name. |
-| DR-5 | **Student** comments have no special badge — only the author name. |
-| DR-6 | Comment body supports full **Markdown**: bold text, links, inline `code`, and fenced code blocks with **syntax highlighting** (Prism / oneLight theme). |
-| DR-7 | Code blocks render with proper language-specific coloring (e.g., TSX, TypeScript). |
+| DR-1 | Comments rendered as recursive tree. Replies indented with left blue border (`ml-6 pl-4`). |
+| DR-2 | Nesting depth is unlimited. |
+| DR-3 | **Mentor** comments show amber "Mentor" badge. |
+| DR-4 | **OP** comments show blue "OP" badge. |
+| DR-5 | **Student** comments show no badge. |
+| DR-6 | Comment body supports Markdown: bold, links, inline code, fenced code blocks with syntax highlighting. |
 
-### B) Interaction Rules — Upvote Toggle
-
-| # | Rule |
-|---|---|
-| UV-1 | Each comment has an "Upvote" button with an upward arrow icon. |
-| UV-2 | Clicking toggles state to "Upvoted" — button fills blue (`bg-blue-800`), text turns white, `aria-pressed="true"`. |
-| UV-3 | Clicking again toggles back to default "Upvote" state (`aria-pressed="false"`, outlined styling). |
-| UV-4 | Upvote state is **per-comment** and independent of other comments. Client-side only (`useState`). |
-
-### C) Interaction Rules — Accept Solution Toggle (OP Only)
+### B) New Comment Form Rules
 
 | # | Rule |
 |---|---|
-| AS-1 | The "Mark Accepted" button appears only when `isOP={true}` (set on the page). |
-| AS-2 | Clicking "Mark Accepted" toggles to "Accepted" — button fills green (`bg-green-700`), `aria-pressed="true"`. |
-| AS-3 | Clicking again toggles back. Both upvote and accept can be active simultaneously. |
-| AS-4 | Upvote and accept are independent toggles — toggling one does not affect the other. |
+| CF-1 | An "Add a Comment" form is displayed at the top of the page above the thread. |
+| CF-2 | User sets their **name** (text input) and **role** (Student / Mentor / OP) before posting. |
+| CF-3 | Textarea supports Markdown. Placeholder text demonstrates supported syntax. |
+| CF-4 | "Post Comment" button is disabled while the textarea is empty. |
+| CF-5 | On submit: comment added to the root of the tree. Textarea clears. |
+| CF-6 | Counter at the bottom shows total comments and root count, updating in real-time. |
 
-![Feedback with Upvote and Accept](screenshots/07-feedback-upvote-accept.png)
+![Feedback Typed](screenshots/11-feedback-typed.png)
+![Feedback Posted](screenshots/12-feedback-posted.png)
 
-*First comment showing "Upvoted" (blue) and "Accepted" (green) states active simultaneously*
-
-### D) Tree Building Algorithm
+### C) Reply (Nested Comment) Rules
 
 | # | Rule |
 |---|---|
-| TB-1 | `buildCommentTree()` converts a flat array of comments into a nested tree using a **two-pass O(n) algorithm**. |
-| TB-2 | Pass 1: Index each comment in a `Map<id, CommentNode>` with an empty `children` array. |
-| TB-3 | Pass 2: Link — if a node has `parent_id` matching another node's `id`, push it into the parent's `children` array. Otherwise, it becomes a root node. |
-| TB-4 | Orphan comments (with `parent_id` not found) are promoted to root level. |
+| RP-1 | Every comment has a "Reply" button (arrow icon) next to Upvote and Accept. |
+| RP-2 | Clicking "Reply" expands an **inline reply form** directly below the comment body. |
+| RP-3 | The reply form contains the same name + role selector and a textarea. |
+| RP-4 | Clicking "Reply" again (showing "Cancel") collapses the form without posting. |
+| RP-5 | "Post Reply" is disabled while the reply textarea is empty. |
+| RP-6 | On submit: reply is added as a **child** of that comment at `depth + 1` nesting. |
+| RP-7 | Reply form clears and collapses after a successful post. Form auto-focuses the textarea. |
+
+![Reply Form](screenshots/13-feedback-reply-form.png)
+![Reply Posted](screenshots/14-feedback-reply-posted.png)
+
+### D) Upvote & Accept Toggle Rules
+
+| # | Rule |
+|---|---|
+| UV-1 | Each comment has an "Upvote" button. Toggles blue filled state on click. |
+| UV-2 | "Mark Accepted" shown when `isOP={true}`. Toggles green filled state on click. |
+| UV-3 | Both states are independent and can be active simultaneously. Client-side only (`useState`). |
+
+### E) Tree State Management
+
+| # | Rule |
+|---|---|
+| TM-1 | All comment state (seed + new) stored in a single `useState<Comment[]>` flat array. |
+| TM-2 | `buildCommentTree()` is called on every render to rebuild the tree from the flat array. |
+| TM-3 | New comments are appended to the flat array with a unique `id` (`Date.now() + random`). |
+| TM-4 | Reply comments set `parent_id` to the target comment's `id`, nesting correctly via the tree builder. |
+| TM-5 | State resets on page reload (no persistence — client-side only). |
 
 ---
 
-## UI 4: Guidance Thread (`/guidance/[projectId]`)
+## UI 4: Guidance Thread — Interactive (`/guidance/[projectId]`)
 
-**Screenshots:** `08-guidance-thread.png`, `09-guidance-interactions.png`
+**Screenshots:** `15-guidance-interactive.png`, `16-guidance-reply-form.png`
 
-![Guidance Thread](screenshots/08-guidance-thread.png)
+![Guidance Interactive](screenshots/15-guidance-interactive.png)
 
 ### A) Display Rules
 
 | # | Rule |
 |---|---|
-| DR-8 | Page heading reads "Guidance Thread" with the `projectId` displayed in a `<code>` tag in the subtitle. |
-| DR-9 | The page uses a **dynamic route** — `/guidance/[projectId]` accepts any project ID as a URL parameter. |
-| DR-10 | Comments are displayed with **date stamps** (`created_at`) on the right side of each comment header. |
-| DR-11 | The thread structure is identical to the Feedback Thread — recursive nesting, role badges, Markdown/code rendering. |
-| DR-12 | **Mentor** comments show amber "Mentor" badge + author name + date. |
-| DR-13 | **OP** comments show blue "OP" badge + author name + date. |
+| DR-7 | Page heading "Guidance Thread" with `projectId` shown as `<code>` in the subtitle. |
+| DR-8 | Dynamic route: `/guidance/[projectId]` accepts any project ID in the URL. |
+| DR-9 | Each comment shows a `created_at` **date stamp** on the right side of the header. |
+| DR-10 | Thread structure identical to Feedback — recursive nesting, role badges, Markdown/code. |
 
-### B) Data Fetch Rules
+### B) Interactive Features (same rules as Feedback Thread)
 
 | # | Rule |
 |---|---|
-| DF-1 | Comments are fetched server-side using `fetchCommentsByProjectId(projectId)` — an async function in the Server Component. |
-| DF-2 | If no comments exist for the given `projectId`, an empty state message appears: "No guidance comments yet — be the first to reply!" |
-| DF-3 | Comment data is transformed into a nested tree using the same `buildCommentTree()` algorithm used in the Feedback Thread. |
+| GI-1 | "Add Guidance Comment" form at page top — same name/role/textarea/Post button UI. |
+| GI-2 | Reply button on every comment opens an inline form with name, role, textarea, "Post Reply". |
+| GI-3 | Upvote and Mark Accepted behave identically to the Feedback Thread. |
+| GI-4 | Comment count stats shown at the bottom (total + root count). |
 
-### C) Interactions
+### C) Data Rules
 
 | # | Rule |
 |---|---|
-| GI-1 | Upvote and Mark Accepted buttons function identically to the Feedback Thread. |
-| GI-2 | Mentor code suggestions render with syntax highlighting within comment bodies. |
+| DF-1 | Initial comments fetched server-side (`fetchCommentsByProjectId`) — async Server Component. |
+| DF-2 | Fetched data passed as props to `InteractiveGuidanceClient` → `InteractiveGuidance` (Client Component). |
+| DF-3 | New comments added client-side using the same `useState` + `buildCommentTree` pattern. |
 
-![Guidance Interactions](screenshots/09-guidance-interactions.png)
+![Guidance Reply Form](screenshots/16-guidance-reply-form.png)
 
-*Mentor comment "Upvoted" (blue) and "Accepted" (green) with code block rendered*
+---
+
+## Updated Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   ├── posts/new/page.tsx
+│   ├── feedback/page.tsx                       ← Now uses InteractiveFeedback
+│   └── guidance/[projectId]/
+│       ├── page.tsx                            ← Server Component (fetches data)
+│       └── InteractiveGuidanceClient.tsx       ← [NEW] Client bridge wrapper
+├── components/
+│   ├── post-form/
+│   │   ├── PostForm.tsx
+│   │   ├── PostFormClient.tsx
+│   │   ├── TagPicker.tsx
+│   │   └── schema.ts
+│   ├── feedback-thread/
+│   │   ├── FeedbackThread.tsx
+│   │   ├── CommentNode.tsx
+│   │   ├── CommentNodeClient.tsx
+│   │   ├── InteractiveFeedback.tsx             ← [NEW] Root comment form + state
+│   │   ├── InteractiveCommentNode.tsx          ← [NEW] CommentNode + Reply button
+│   │   └── types.ts
+│   └── guidance-thread/
+│       ├── GuidanceThread.tsx
+│       ├── GuidanceCommentNode.tsx
+│       ├── InteractiveGuidance.tsx             ← [NEW] Root comment form + state
+│       ├── InteractiveGuidanceNode.tsx         ← [NEW] GuidanceNode + Reply button
+│       └── data.ts
+```
 
 ---
 
@@ -205,7 +248,7 @@
 | Technology | Purpose |
 |---|---|
 | Next.js 14 (App Router) | React framework with Server/Client Components |
-| React 18 | UI component library |
+| React 18 | UI library + hooks (`useState`, `useCallback`, `useFormState`, `useFormStatus`) |
 | TypeScript 5 | Type-safe development |
 | Tailwind CSS | Utility-first CSS styling |
 | Zod | Schema-based form validation |
@@ -221,34 +264,3 @@
 |---|---|
 | **Repository** | `https://github.com/sneha-dhaya-IT/Ideabridge.git` |
 | **Branch** | `member2-idea-guidance` |
-| **Commits** | Meaningful commits tracking each feature addition |
-
----
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── layout.tsx                  ← Root layout (Server Component)
-│   ├── page.tsx                    ← Home page
-│   ├── globals.css                 ← Global styles
-│   ├── posts/new/page.tsx          ← Project Idea Form page
-│   ├── feedback/page.tsx           ← Feedback Thread page
-│   └── guidance/[projectId]/page.tsx  ← Dynamic Guidance page
-├── components/
-│   ├── post-form/
-│   │   ├── PostForm.tsx            ← Form wrapper + action handler
-│   │   ├── PostFormClient.tsx      ← Interactive form UI (useFormState)
-│   │   ├── TagPicker.tsx           ← Multi-select tag picker
-│   │   └── schema.ts              ← Zod validation schema
-│   ├── feedback-thread/
-│   │   ├── FeedbackThread.tsx      ← Server Component (tree builder)
-│   │   ├── CommentNode.tsx         ← Recursive comment renderer
-│   │   ├── CommentNodeClient.tsx   ← Client wrapper
-│   │   └── types.ts               ← Types + buildCommentTree()
-│   └── guidance-thread/
-│       ├── GuidanceThread.tsx      ← Server Component (data fetch + tree)
-│       ├── GuidanceCommentNode.tsx ← Recursive comment renderer
-│       └── data.ts                ← Types + fetchComments + buildTree
-```
