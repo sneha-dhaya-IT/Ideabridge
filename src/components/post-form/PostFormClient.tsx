@@ -3,7 +3,18 @@
 import { useMemo, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
-import type { PostFormState } from "./actions";
+// PostFormState type (originally from actions.ts)
+type PostFormState =
+  | {
+      ok: false;
+      fieldErrors?: Record<string, string[]>;
+      formError?: string;
+    }
+  | {
+      ok: true;
+      message: string;
+      insertedRow: Record<string, unknown>;
+    };
 import { TagPicker } from "./TagPicker";
 
 type PostFormClientProps = {

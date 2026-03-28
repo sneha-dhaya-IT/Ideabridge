@@ -1,5 +1,3 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-
 // ── Row type matching the Supabase `comments` table ──────────
 
 export type CommentRow = {
@@ -16,41 +14,58 @@ export type CommentTreeNode = CommentRow & {
   children: CommentTreeNode[];
 };
 
-// ── Supabase fetch ───────────────────────────────────────────
+// ── Demo data fetch (no backend needed for presentation) ─────
 
 /**
- * Fetch every comment that belongs to a given `project_id`,
- * ordered oldest-first so parent nodes are always seen before
- * their children when building the tree.
+ * Returns demo/mock data for the guidance thread.
+ * In production this would call Supabase.
  */
 export async function fetchCommentsByProjectId(
   projectId: string,
 ): Promise<CommentRow[]> {
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
-    console.warn("[fetchCommentsByProjectId] Supabase env vars not set");
-    return [];
-  }
-
-  const supabase = createSupabaseServerClient();
-
-  const { data, error } = await supabase
-    .from("comments")
-    .select("id, project_id, parent_id, content, role, author, created_at")
-    .eq("project_id", projectId)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error(
-      "[fetchCommentsByProjectId] query failed:",
-      error.message,
-    );
-    return [];
-  }
-
-  return data as CommentRow[];
+  // Return sample demo comments for presentation
+  return [
+    {
+      id: "demo-1",
+      project_id: projectId,
+      parent_id: null,
+      content:
+        "Great project idea! I think you could refine the problem statement a bit more to clarify the target audience.",
+      role: "mentor",
+      author: "Dr. Fernando",
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    },
+    {
+      id: "demo-2",
+      project_id: projectId,
+      parent_id: "demo-1",
+      content:
+        "Thank you for the feedback! I've updated the problem statement to include specific user personas.",
+      role: "poster",
+      author: "Akshayan",
+      created_at: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      id: "demo-3",
+      project_id: projectId,
+      parent_id: null,
+      content:
+        "Consider adding **Next.js** server actions for the form submission. Here's a quick example:\n```ts\nexport async function submitIdea(formData: FormData) {\n  'use server';\n  // validate & insert\n}\n```",
+      role: "mentor",
+      author: "Mr. Perera",
+      created_at: new Date(Date.now() - 43200000).toISOString(),
+    },
+    {
+      id: "demo-4",
+      project_id: projectId,
+      parent_id: "demo-3",
+      content:
+        "That's a great suggestion! I've implemented server actions with Zod validation.",
+      role: "student",
+      author: "Akshayan",
+      created_at: new Date().toISOString(),
+    },
+  ];
 }
 
 // ── Recursive tree builder ───────────────────────────────────
@@ -59,13 +74,6 @@ export async function fetchCommentsByProjectId(
  * Transform a flat array of comment rows into an arbitrarily
  * nested tree by matching each row's `parent_id` to another
  * row's `id`.
- *
- * Algorithm (O(n)):
- *  1. Index every row in a Map keyed by `id`, adding an empty
- *     `children` array.
- *  2. Walk the map — push each node into its parent's
- *     `children` array, or into the `roots` list if it has
- *     no parent.
  */
 export function buildCommentTree(rows: CommentRow[]): CommentTreeNode[] {
   const map = new Map<string, CommentTreeNode>();
