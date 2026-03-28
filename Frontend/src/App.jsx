@@ -707,7 +707,7 @@ export default function App(){
               {faculty && <span className="filter-badge active">1</span>}
             </label>
             <select value={faculty} onChange={e=>{setFaculty(e.target.value); setCourse('');}}>
-              <option value="">All Faculties</option>
+              <option value="">Specializations</option>
               {filterOptions?.faculties?.map(f => (
                 <option key={f} value={f}>{f} ({filterOptions.counts?.byFaculty?.[f] || 0})</option>
               )) || (
