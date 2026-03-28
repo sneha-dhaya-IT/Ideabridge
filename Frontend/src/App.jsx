@@ -277,6 +277,40 @@ export default function App(){
     if (!searchValidation.isValid) {
       errors.keyword = searchValidation.error;
     }
+
+    // Validate faculty
+    if (faculty) {
+      if (!VALIDATION.VALID_FACULTIES.includes(faculty)) {
+        errors.faculty = 'Invalid faculty selected.';
+      }
+    }
+
+    // Validate course (requires faculty when course selected)
+    if (course) {
+      if (!faculty) {
+        errors.course = 'Select a faculty before choosing a course.';
+      } else {
+        const validCourses = filterOptions?.coursesByFaculty?.[faculty] || VALIDATION.VALID_COURSES;
+        if (!validCourses.includes(course)) {
+          errors.course = 'Invalid course for the selected faculty.';
+        }
+      }
+    }
+
+    // Validate category
+    if (category && !VALIDATION.VALID_CATEGORIES.includes(category)) {
+      errors.category = 'Invalid category.';
+    }
+
+    // Validate difficulty
+    if (difficulty && !VALIDATION.VALID_DIFFICULTIES.includes(difficulty)) {
+      errors.difficulty = 'Invalid difficulty.';
+    }
+
+    // Validate status
+    if (status && !VALIDATION.VALID_STATUSES.includes(status)) {
+      errors.status = 'Invalid status.';
+    }
     
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -686,6 +720,7 @@ export default function App(){
                 </>
               )}
             </select>
+            {validationErrors.faculty && <div className="validation-error small">{validationErrors.faculty}</div>}
           </div>
 
           <div className="filter-group">
@@ -701,6 +736,7 @@ export default function App(){
               ))}
             </select>
             {!faculty && <span className="filter-hint">Choose a faculty first</span>}
+            {validationErrors.course && <div className="validation-error small">{validationErrors.course}</div>}
           </div>
 
           <div className="filter-group">
@@ -727,6 +763,7 @@ export default function App(){
                 </>
               )}
             </select>
+            {validationErrors.category && <div className="validation-error small">{validationErrors.category}</div>}
           </div>
 
           <div className="filter-group">
@@ -741,6 +778,7 @@ export default function App(){
               <option value="Medium">🟡 Medium</option>
               <option value="Hard">🔴 Hard</option>
             </select>
+            {validationErrors.difficulty && <div className="validation-error small">{validationErrors.difficulty}</div>}
           </div>
 
           <div className="filter-group">
@@ -755,6 +793,7 @@ export default function App(){
               <option value="Approved">✅ Approved</option>
               <option value="Completed">🏆 Completed</option>
             </select>
+            {validationErrors.status && <div className="validation-error small">{validationErrors.status}</div>}
           </div>
 
           <div className="filter-group">
