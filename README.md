@@ -1,45 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IdeaBridge — Idea & Guidance Module
+
+> **SLIIT ITPM IT3040 | Semester 1 | Progress 1 Demo**  
+> Member 2 — Akshayan | Branch: `member2-idea-guidance`
+
+A Next.js 14 web module that enables students to **submit project ideas**, receive **recursive threaded feedback** from mentors and peers, and interact with **per-project guidance threads** — all with full Markdown support, syntax highlighting, and live client-side interactivity.
+
+---
+
+## Features
+
+### Project Idea Form (`/posts/new`)
+- Multi-field form: **Title**, **Problem Statement**, **Project Variant**, **URLs**, **Tech Stack tags**
+- **Zod schema validation** — inline error messages per field, no page reload
+- **Tag Picker** — multi-select pill buttons (Next.js, React, TypeScript, Supabase, etc.)
+- **Dynamic URL list** — add/remove URL inputs dynamically
+- Submit button disabled during processing (`useFormStatus`)
+- Success banner with submitted JSON payload on valid form
+
+### Feedback Threads (`/feedback`)
+- **Live interactive** comment tree — post comments directly in the browser
+- **Inline Reply forms** — click Reply on any comment to add a nested reply
+- **Unlimited nesting depth** via recursive `buildCommentTree()` algorithm
+- Role badges: 🟡 **Mentor** (amber) · 🔵 **OP** (blue) · **Student** (none)
+- **Markdown rendered** comment bodies — bold, links, inline code, fenced code blocks
+- **Syntax highlighting** on code blocks (Prism / oneLight theme)
+- **Upvote** toggle (blue) and **Mark Accepted** toggle (green) per comment
+- Real-time comment count stats
+
+### Guidance Thread (`/guidance/[projectId]`)
+- Dynamic route — works for any project ID
+- Same interactive features as Feedback Thread (add, reply, upvote, accept)
+- Comment **date stamps** shown on every entry
+- Initial data fetched server-side (Server Component), interactions handled client-side
+
+---
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-If you're running commands from Windows PowerShell and see an error like "running scripts is disabled", use `npm.cmd` / `npx.cmd` instead:
+> **Windows PowerShell users** — if you see "running scripts is disabled":
+> ```bash
+> npm.cmd run dev
+> ```
 
-```bash
-npm.cmd run dev
+The dev server starts at **http://localhost:3000** (or 3001 if 3000 is in use).
+
+---
+
+## Pages
+
+| Route | Description |
+|---|---|
+| `http://localhost:3001/posts/new` | Submit a Project Idea (form + Zod validation) |
+| `http://localhost:3001/feedback` | Interactive Feedback Thread (add/reply/upvote/accept) |
+| `http://localhost:3001/guidance/1` | Guidance Thread for project ID `1` |
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   ├── posts/new/page.tsx                      ← Project Idea Form
+│   ├── feedback/page.tsx                       ← Interactive Feedback Thread
+│   └── guidance/[projectId]/
+│       ├── page.tsx                            ← Server Component (fetches data)
+│       └── InteractiveGuidanceClient.tsx       ← Client boundary wrapper
+├── components/
+│   ├── post-form/
+│   │   ├── PostForm.tsx                        ← Form + demo action (Zod validation)
+│   │   ├── PostFormClient.tsx                  ← Form UI (useFormState)
+│   │   ├── TagPicker.tsx                       ← Multi-select tag picker
+│   │   └── schema.ts                           ← Zod validation schema
+│   ├── feedback-thread/
+│   │   ├── InteractiveFeedback.tsx             ← Comment form + flat state management
+│   │   ├── InteractiveCommentNode.tsx          ← Recursive node + Reply button
+│   │   ├── CommentNode.tsx                     ← Original read-only node
+│   │   ├── CommentNodeClient.tsx               ← Client wrapper
+│   │   └── types.ts                            ← Types + buildCommentTree()
+│   └── guidance-thread/
+│       ├── InteractiveGuidance.tsx             ← Comment form + state management
+│       ├── InteractiveGuidanceNode.tsx         ← Recursive node + Reply button
+│       ├── GuidanceCommentNode.tsx             ← Original read-only node
+│       └── data.ts                             ← Types + fetchCommentsByProjectId()
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-## PostForm demo
+## Tech Stack
 
-- Visit [http://localhost:3000/posts/new](http://localhost:3000/posts/new) to use the dynamic `PostForm`.
-- Submitting the form runs a Next.js Server Action with Zod validation and prints a Supabase-ready JSON payload.
+| Technology | Version | Purpose |
+|---|---|---|
+| Next.js | 14.2.35 | App Router framework |
+| React | 18 | UI + hooks |
+| TypeScript | 5 | Type safety |
+| Tailwind CSS | 3 | Styling |
+| Zod | 3 | Form validation |
+| react-markdown | — | Markdown rendering |
+| remark-gfm | — | GFM support |
+| react-syntax-highlighter | — | Code block highlighting |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-## Learn More
+## Key Business Rules
 
-To learn more about Next.js, take a look at the following resources:
+| Rule | Detail |
+|---|---|
+| **VR-1** | Title: required, min 10 characters |
+| **VR-2** | Problem Statement: required |
+| **VR-3** | Project Variant: required, one of 4 values |
+| **VR-4** | URLs: optional, must be valid URL format |
+| **RP-6** | New replies are nested under the clicked comment (`parent_id`) |
+| **TM-2** | `buildCommentTree()` rebuilds the full tree on every state update |
+| **DF-2** | Guidance: server fetches seed data → passed as props to client for interactivity |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Documentation (`/docs`)
 
-## Deploy on Vercel
+| File | Description |
+|---|---|
+| `Progress-1-UI-Business-Rules.md` | Full UI & business rules with screenshots |
+| `Progress-1-UI-Business-Rules.docx` | Word document version (with embedded screenshots) |
+| `demo_viva_prep.md` | Demo script, 13 viva Q&A, checklist, code locations |
+| `screenshots/` | 16 UI state screenshots for PP1 documentation |
+| `Assignment 3 - pp1.pdf` | Original SLIIT assignment brief |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Demo Notes
+
+- **No backend required** — validation and form submission run client-side (demo mode)
+- **No database** — comment data is seeded mock data; new comments exist only in React state (lost on refresh)
+- This branch (`member2-idea-guidance`) is scoped to the Idea & Guidance UI for Progress 1
+
+---
+
+## Repository
+
+- **Org Repo:** [sneha-dhaya-IT/Ideabridge](https://github.com/sneha-dhaya-IT/Ideabridge)
+- **Branch:** `member2-idea-guidance`
