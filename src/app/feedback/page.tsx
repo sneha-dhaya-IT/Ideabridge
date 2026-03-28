@@ -49,7 +49,7 @@ export default function FeedbackPage() {
       <div className="mx-auto w-full max-w-3xl space-y-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight text-blue-950">
-            Feedback Thread
+            Feedback Threads
           </h1>
           <p className="text-sm text-blue-700">
             Recursive comment tree with Markdown, code highlighting, mentor
