@@ -1,10 +1,13 @@
-import GuidanceThread from "@/components/guidance-thread/GuidanceThread";
+import { fetchCommentsByProjectId } from "@/components/guidance-thread/data";
+import { InteractiveGuidanceClient } from "./InteractiveGuidanceClient";
 
 type PageProps = {
   params: { projectId: string };
 };
 
-export default function GuidancePage({ params }: PageProps) {
+export default async function GuidancePage({ params }: PageProps) {
+  const initialComments = await fetchCommentsByProjectId(params.projectId);
+
   return (
     <main className="min-h-screen bg-blue-50 px-4 py-10">
       <div className="mx-auto w-full max-w-3xl space-y-4">
@@ -13,15 +16,18 @@ export default function GuidancePage({ params }: PageProps) {
             Guidance Thread
           </h1>
           <p className="text-sm text-blue-700">
-            Comments for project{" "}
+            Interactive guidance for project{" "}
             <code className="rounded bg-blue-100 px-1 py-0.5 text-xs">
               {params.projectId}
-            </code>
+            </code>{" "}
+            — add comments, reply, and interact.
           </p>
         </div>
 
-        {/* Server Component — fetches + nests comments automatically */}
-        <GuidanceThread projectId={params.projectId} isOP />
+        <InteractiveGuidanceClient
+          initialComments={initialComments}
+          projectId={params.projectId}
+        />
       </div>
     </main>
   );

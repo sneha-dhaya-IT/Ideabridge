@@ -1,7 +1,9 @@
-import type { Comment } from "@/components/feedback-thread/types";
-import FeedbackThread from "@/components/feedback-thread/FeedbackThread";
+"use client";
 
-/* ── Sample data with nested replies ──────────── */
+import type { Comment } from "@/components/feedback-thread/types";
+import { InteractiveFeedback } from "@/components/feedback-thread/InteractiveFeedback";
+
+/* ── Sample seed data ──────────────────────────── */
 const sampleComments: Comment[] = [
   {
     id: "1",
@@ -52,12 +54,15 @@ export default function FeedbackPage() {
             Feedback Threads
           </h1>
           <p className="text-sm text-blue-700">
-            Recursive comment tree with Markdown, code highlighting, mentor
-            badges and OP toggles.
+            Interactive comment tree — add comments, reply to existing ones,
+            upvote, and mark accepted. Supports Markdown and code highlighting.
           </p>
         </div>
 
-        <FeedbackThread comments={sampleComments} isOP />
+        <InteractiveFeedback
+          initialComments={sampleComments}
+          currentUser="akshayan"
+        />
       </div>
     </main>
   );
