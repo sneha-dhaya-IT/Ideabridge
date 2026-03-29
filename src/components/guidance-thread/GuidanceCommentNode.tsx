@@ -25,7 +25,7 @@ export function GuidanceCommentNode({ node, isOP, depth = 0 }: Props) {
         "relative " + (depth > 0 ? "ml-6 border-l-2 border-darkSecondary/10 pl-4" : "")
       }
     >
-      <div className="rounded-lg border border-darkSecondary/10 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-darkSecondary/10 bg-slateLight p-4 shadow-sm">
         {/* ── Header ──────────────────────────── */}
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold text-darkPrimary">

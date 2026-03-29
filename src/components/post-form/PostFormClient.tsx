@@ -59,7 +59,7 @@ function UrlListInput({ errors }: { errors: string[] }) {
               setUrls(next);
             }}
             placeholder="https://…"
-            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
+            className="w-full rounded-md border border-darkSecondary/20 bg-slateLight px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {urls.length > 1 && (
             <button
@@ -98,7 +98,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
   const variantErrors = state.ok ? [] : (state.fieldErrors?.variant ?? []);
 
   return (
-    <div className="rounded-xl border border-darkSecondary/10 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-darkSecondary/10 bg-slateLight p-6 shadow-sm">
       <div className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight text-darkPrimary">
           Submit a Project Idea
@@ -119,7 +119,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
             id="title"
             name="title"
             placeholder="Write a descriptive title (min 10 chars)"
-            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
+            className="w-full rounded-md border border-darkSecondary/20 bg-slateLight px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {titleErrors.length > 0 ? (
             <p className="text-sm text-red-700">{titleErrors[0]}</p>
@@ -139,7 +139,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
             name="problemStatement"
             rows={6}
             placeholder="Explain the problem clearly and concisely"
-            className="w-full resize-y rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
+            className="w-full resize-y rounded-md border border-darkSecondary/20 bg-slateLight px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {problemErrors.length > 0 ? (
             <p className="text-sm text-red-700">{problemErrors[0]}</p>
@@ -155,7 +155,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
             id="variant"
             name="variant"
             defaultValue=""
-            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
+            className="w-full rounded-md border border-darkSecondary/20 bg-slateLight px-3 py-2 text-sm text-darkPrimary focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           >
             <option value="" disabled>
               Select a variant…
@@ -195,7 +195,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
           <h2 className="text-sm font-semibold text-green-900">
             {state.message}
           </h2>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-white p-3 text-xs text-darkPrimary">
+          <pre className="mt-3 overflow-x-auto rounded-md bg-slateLight p-3 text-xs text-darkPrimary">
             {JSON.stringify(state.insertedRow, null, 2)}
           </pre>
         </div>

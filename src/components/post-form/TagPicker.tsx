@@ -44,7 +44,7 @@ export function TagPicker({ name, label, defaultValue }: TagPickerProps) {
                 "rounded-full border px-3 py-1 text-sm transition-colors " +
                 (isSelected
                   ? "border-goldPrimary bg-goldPrimary text-darkPrimary"
-                  : "border-darkSecondary/20 bg-white text-darkSecondary hover:bg-slateLight")
+                  : "border-darkSecondary/20 bg-slateLight text-darkSecondary hover:bg-slateLight")
               }
               aria-pressed={isSelected}
             >
