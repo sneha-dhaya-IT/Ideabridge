@@ -87,43 +87,53 @@ function useDebounce(value, delay) {
   return debouncedValue
 }
 
+// Academic Structure for cascading filters - Year > Semester > Specialization
+const ACADEMIC_STRUCTURE = {
+  'Year 1': {
+    'Semester 1': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning'],
+    'Semester 2': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning']
+  },
+  'Year 2': {
+    'Semester 1': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning'],
+    'Semester 2': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning']
+  },
+  'Year 3': {
+    'Semester 1': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning'],
+    'Semester 2': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning']
+  },
+  'Year 4': {
+    'Semester 1': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning'],
+    'Semester 2': ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning']
+  }
+};
+
+// All available specializations for validation and search
+const ALL_SPECIALIZATIONS = ['Network', 'SE', 'Data Science', 'Cyber Security', 'System Engineering', 'AI', 'Machine Learning', 'IT'];
+
+// Map specializations to their corresponding categories
+const SPECIALIZATION_TO_CATEGORY = {
+  'Network': 'Networking',
+  'SE': 'Web',
+  'Data Science': 'Data Science',
+  'Cyber Security': 'Cyber Security',
+  'System Engineering': 'Other',
+  'AI': 'AI',
+  'Machine Learning': 'AI',
+  'IT': 'Other'
+};
+
 // Validation constants (must match backend)
 const VALIDATION = {
   MAX_KEYWORD_LENGTH: 100,
   MAX_PAGE_SIZE: 100,
   MIN_KEYWORD_LENGTH: 2,
-  VALID_FACULTIES: ['IT', 'SE', 'Data Science', 'Cyber', 'Network'],
+  VALID_YEARS: ['Year 1', 'Year 2', 'Year 3', 'Year 4'],
+  VALID_SEMESTERS: ['Semester 1', 'Semester 2'],
   VALID_CATEGORIES: ['Web', 'Mobile', 'AI', 'IoT', 'Data Science', 'Cyber Security', 'Networking', 'Cloud', 'Other'],
   VALID_DIFFICULTIES: ['Easy', 'Medium', 'Hard'],
   VALID_STATUSES: ['New', 'Approved', 'Completed'],
-  // All valid courses for search validation
-  VALID_COURSES: [
-    // IT Courses
-    'Programming Fundamentals', 'Database Systems', 'Web Development', 'Software Engineering', 
-    'Computer Networks', 'Operating Systems', 'Cyber Security Basics', 'Object Oriented Programming',
-    'Java Programming', 'Python Programming', 'Data Structures & Algorithms', 'Mobile Application Development',
-    'Human Computer Interaction', 'Information Security', 'IT Project Management', 'Enterprise Architecture',
-    // SE Courses
-    'Software Design', 'Agile Development', 'System Architecture', 'Quality Assurance', 
-    'DevOps', 'Cloud Computing', 'Mobile App Development', 'Requirements Engineering',
-    'Software Testing', 'Design Patterns', 'Microservices Architecture', 'Full Stack Development',
-    'API Development', 'Continuous Integration', 'Software Metrics', 'Formal Methods',
-    // Data Science Courses
-    'Data Analytics', 'Machine Learning', 'Deep Learning', 'Big Data', 
-    'Statistical Analysis', 'Data Visualization', 'Python for Data Science', 'Natural Language Processing',
-    'Computer Vision', 'Reinforcement Learning', 'Time Series Analysis', 'Data Mining',
-    'Business Intelligence', 'Predictive Analytics', 'Neural Networks', 'Data Engineering',
-    // Cyber Courses
-    'Network Security', 'Ethical Hacking', 'Digital Forensics', 'Cryptography', 
-    'Security Auditing', 'Malware Analysis', 'Incident Response', 'Penetration Testing',
-    'Web Application Security', 'Cloud Security', 'IoT Security', 'Blockchain Security',
-    'Risk Management', 'Compliance & Governance', 'Threat Intelligence', 'Security Operations',
-    // Network Courses
-    'Network Administration', 'Cisco CCNA', 'Cloud Infrastructure', 'Wireless Networks', 
-    'Network Protocols', 'SDN', 'Network Troubleshooting', 'Network Design',
-    'VoIP Technologies', 'Network Virtualization', '5G Networks', 'Fiber Optics',
-    'Data Center Management', 'Load Balancing', 'Network Automation', 'IPv6 Implementation'
-  ]
+  // All valid specializations for search validation
+  VALID_SPECIALIZATIONS: ALL_SPECIALIZATIONS
 };
 
 // Frontend validation functions
@@ -143,7 +153,7 @@ function validateKeyword(keyword) {
   return { isValid: true, error: null };
 }
 
-// Validate if keyword matches any valid category or course
+// Validate if keyword matches any valid category or specialization
 function validateSearchKeywordAgainstValidOptions(keyword) {
   if (!keyword || keyword.trim().length === 0) {
     return { isValid: true, error: null };
@@ -156,17 +166,17 @@ function validateSearchKeywordAgainstValidOptions(keyword) {
     cat => cat.toLowerCase().includes(searchTerm) || searchTerm.includes(cat.toLowerCase())
   );
   
-  // Check if keyword matches any valid course
-  const matchingCourses = VALIDATION.VALID_COURSES.filter(
-    course => course.toLowerCase().includes(searchTerm) || searchTerm.includes(course.toLowerCase())
+  // Check if keyword matches any valid specialization
+  const matchingSpecializations = VALIDATION.VALID_SPECIALIZATIONS.filter(
+    spec => spec.toLowerCase().includes(searchTerm) || searchTerm.includes(spec.toLowerCase())
   );
   
   // If no matches found, return error
-  if (matchingCategories.length === 0 && matchingCourses.length === 0) {
+  if (matchingCategories.length === 0 && matchingSpecializations.length === 0) {
     return {
       isValid: false,
-      error: `"${keyword}" is not a valid category or course. Please search for: Web, Mobile, AI, Machine Learning, Database Systems, etc.`,
-      suggestions: [...VALIDATION.VALID_CATEGORIES.slice(0, 5), ...VALIDATION.VALID_COURSES.slice(0, 5)]
+      error: `"${keyword}" is not a valid category or specialization. Please search for: Web, Mobile, AI, Network, Data Science, Cyber Security, etc.`,
+      suggestions: [...VALIDATION.VALID_CATEGORIES.slice(0, 5), ...VALIDATION.VALID_SPECIALIZATIONS.slice(0, 5)]
     };
   }
   
@@ -175,7 +185,7 @@ function validateSearchKeywordAgainstValidOptions(keyword) {
     error: null,
     matches: {
       categories: matchingCategories,
-      courses: matchingCourses
+      specializations: matchingSpecializations
     }
   };
 }
@@ -193,8 +203,9 @@ export default function App(){
   const [keyword,setKeyword] = useState('')
   const [category,setCategory] = useState('')
   const [difficulty,setDifficulty] = useState('')
-  const [faculty,setFaculty] = useState('')
-  const [course,setCourse] = useState('')
+  const [year,setYear] = useState('')
+  const [semester,setSemester] = useState('')
+  const [specialization,setSpecialization] = useState('')
   const [status,setStatus] = useState('')
   
   // UI States
@@ -211,7 +222,7 @@ export default function App(){
   const [showFilters, setShowFilters] = useState(true)
   const [viewMode, setViewMode] = useState('grid')
   const [showStats, setShowStats] = useState(false)
-  const [animatedStats, setAnimatedStats] = useState({ projects: 0, faculties: 0, courses: 0 })
+  const [animatedStats, setAnimatedStats] = useState({ projects: 0, years: 0, subjects: 0 })
   
   // Advanced Feature States
   const [collections, setCollections] = useLocalStorage(STORAGE_KEYS.COLLECTIONS, [])
@@ -255,11 +266,16 @@ export default function App(){
     }
   }, [])
 
-  // Get available courses based on selected faculty
-  const getAvailableCourses = () => {
-    if (!filterOptions) return [];
-    if (!faculty) return filterOptions.courses || [];
-    return filterOptions.coursesByFaculty?.[faculty] || [];
+  // Get available semesters based on selected year
+  const getAvailableSemesters = () => {
+    if (!year) return [];
+    return ACADEMIC_STRUCTURE[year] ? Object.keys(ACADEMIC_STRUCTURE[year]) : [];
+  };
+
+  // Get available specializations based on selected year and semester
+  const getAvailableSpecializations = () => {
+    if (!year || !semester) return [];
+    return ACADEMIC_STRUCTURE[year]?.[semester] || [];
   };
 
   // Validate all inputs before search
@@ -277,40 +293,6 @@ export default function App(){
     if (!searchValidation.isValid) {
       errors.keyword = searchValidation.error;
     }
-
-    // Validate faculty
-    if (faculty) {
-      if (!VALIDATION.VALID_FACULTIES.includes(faculty)) {
-        errors.faculty = 'Invalid faculty selected.';
-      }
-    }
-
-    // Validate course (requires faculty when course selected)
-    if (course) {
-      if (!faculty) {
-        errors.course = 'Select a faculty before choosing a course.';
-      } else {
-        const validCourses = filterOptions?.coursesByFaculty?.[faculty] || VALIDATION.VALID_COURSES;
-        if (!validCourses.includes(course)) {
-          errors.course = 'Invalid course for the selected faculty.';
-        }
-      }
-    }
-
-    // Validate category
-    if (category && !VALIDATION.VALID_CATEGORIES.includes(category)) {
-      errors.category = 'Invalid category.';
-    }
-
-    // Validate difficulty
-    if (difficulty && !VALIDATION.VALID_DIFFICULTIES.includes(difficulty)) {
-      errors.difficulty = 'Invalid difficulty.';
-    }
-
-    // Validate status
-    if (status && !VALIDATION.VALID_STATUSES.includes(status)) {
-      errors.status = 'Invalid status.';
-    }
     
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -327,16 +309,18 @@ export default function App(){
     const sanitizedKeyword = sanitizeInput(keyword);
     const sanitizedCategory = sanitizeInput(category);
     const sanitizedDifficulty = sanitizeInput(difficulty);
-    const sanitizedFaculty = sanitizeInput(faculty);
-    const sanitizedCourse = sanitizeInput(course);
+    const sanitizedYear = sanitizeInput(year);
+    const sanitizedSemester = sanitizeInput(semester);
+    const sanitizedSpecialization = sanitizeInput(specialization);
     const sanitizedStatus = sanitizeInput(status);
 
     const params = {}
     if(sanitizedKeyword) params.keyword = sanitizedKeyword
     if(sanitizedCategory) params.category = sanitizedCategory
     if(sanitizedDifficulty) params.difficulty = sanitizedDifficulty
-    if(sanitizedFaculty) params.faculty = sanitizedFaculty
-    if(sanitizedCourse) params.course = sanitizedCourse
+    if(sanitizedYear) params.year = sanitizedYear
+    if(sanitizedSemester) params.semester = sanitizedSemester
+    if(sanitizedSpecialization) params.specialization = sanitizedSpecialization
     if(sanitizedStatus) params.status = sanitizedStatus
     params.page = pageNum
     params.limit = Math.min(limit, VALIDATION.MAX_PAGE_SIZE)
@@ -369,16 +353,16 @@ export default function App(){
     }finally{
       setLoading(false)
     }
-  }, [keyword, category, difficulty, faculty, course, status, limit, sortBy, order])
+  }, [keyword, category, difficulty, year, semester, specialization, status, limit, sortBy, order])
 
   // Real-time search when debounced keyword changes
   useEffect(() => {
     if(debouncedKeyword !== undefined){
       doSearch(1)
     }
-  }, [debouncedKeyword, category, difficulty, faculty, course, status, sortBy, order, doSearch])
+  }, [debouncedKeyword, category, difficulty, year, semester, specialization, status, sortBy, order, doSearch])
 
-  // Get suggestions based on keyword - only valid categories and courses
+  // Get suggestions based on keyword - only valid categories and specializations
   useEffect(() => {
     if(keyword.length > 1){
       const searchTerm = keyword.toLowerCase();
@@ -388,13 +372,13 @@ export default function App(){
         cat.toLowerCase().includes(searchTerm)
       );
       
-      // Filter valid courses
-      const courseMatches = VALIDATION.VALID_COURSES.filter(course =>
-        course.toLowerCase().includes(searchTerm)
+      // Filter valid specializations
+      const specializationMatches = VALIDATION.VALID_SPECIALIZATIONS.filter(spec =>
+        spec.toLowerCase().includes(searchTerm)
       );
       
       // Combine and limit suggestions
-      const allMatches = [...categoryMatches, ...courseMatches].slice(0, 8);
+      const allMatches = [...categoryMatches, ...specializationMatches].slice(0, 8);
       setSuggestions(allMatches);
     } else {
       setSuggestions([])
@@ -406,8 +390,9 @@ export default function App(){
     setKeyword('')
     setCategory('')
     setDifficulty('')
-    setFaculty('')
-    setCourse('')
+    setYear('')
+    setSemester('')
+    setSpecialization('')
     setStatus('')
     setPage(1)
     setResults(null)
@@ -420,8 +405,9 @@ export default function App(){
       case 'keyword': setKeyword(''); break
       case 'category': setCategory(''); break
       case 'difficulty': setDifficulty(''); break
-      case 'faculty': setFaculty(''); setCourse(''); break
-      case 'course': setCourse(''); break
+      case 'year': setYear(''); setSemester(''); setSpecialization(''); setCategory(''); break
+      case 'semester': setSemester(''); setSpecialization(''); setCategory(''); break
+      case 'specialization': setSpecialization(''); setCategory(''); break
       case 'status': setStatus(''); break
     }
   }
@@ -430,12 +416,22 @@ export default function App(){
   const getActiveFilters = () => {
     const filters = []
     if(keyword) filters.push({type: 'keyword', label: `Keyword: ${keyword}`})
-    if(faculty) filters.push({type: 'faculty', label: faculty})
-    if(course) filters.push({type: 'course', label: course})
+    if(year) filters.push({type: 'year', label: year})
+    if(semester) filters.push({type: 'semester', label: semester})
+    if(specialization) filters.push({type: 'specialization', label: specialization})
     if(category) filters.push({type: 'category', label: category})
     if(difficulty) filters.push({type: 'difficulty', label: difficulty})
     if(status) filters.push({type: 'status', label: status})
     return filters
+  }
+
+  // Get academic filter path for display (e.g., "Year 1 > Semester 2 > Network")
+  const getAcademicFilterPath = () => {
+    if (!year) return null;
+    const parts = [year];
+    if (semester) parts.push(semester);
+    if (specialization) parts.push(specialization);
+    return parts.join(' > ');
   }
 
   // Export results to JSON
@@ -549,8 +545,8 @@ export default function App(){
         
         setAnimatedStats({
           projects: Math.round((filterOptions.counts?.byCategory ? Object.values(filterOptions.counts.byCategory).reduce((a,b) => a+b, 0) : 33) * easeOut),
-          faculties: Math.round(5 * easeOut),
-          courses: Math.round(80 * easeOut)
+          years: Math.round(4 * easeOut),
+          subjects: Math.round(48 * easeOut)
         })
         
         if (step >= steps) clearInterval(timer)
@@ -600,12 +596,12 @@ export default function App(){
             <span className="stat-label">Projects</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">{animatedStats.faculties}</span>
-            <span className="stat-label">Faculties</span>
+            <span className="stat-number">{animatedStats.years}</span>
+            <span className="stat-label">Years</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">{animatedStats.courses}</span>
-            <span className="stat-label">Courses</span>
+            <span className="stat-number">{animatedStats.subjects}</span>
+            <span className="stat-label">Subjects</span>
           </div>
           <div className="stat-item highlight">
             <span className="stat-number">{favorites.length}</span>
@@ -680,63 +676,84 @@ export default function App(){
         <div className="filter-presets">
           <span className="presets-label">Quick Filters:</span>
           <div className="preset-chips">
-            <button className="preset-chip" onClick={() => {setCategory('AI'); setFaculty(''); setCourse(''); setDifficulty(''); setStatus('');}}>
-              🤖 AI Projects
+            <button className="preset-chip" onClick={() => {setSpecialization('AI'); setCategory('AI'); setYear(''); setSemester(''); setDifficulty(''); setStatus('');}}>
+              🤖 AI Specialization
             </button>
-            <button className="preset-chip" onClick={() => {setCategory('Web'); setFaculty(''); setCourse(''); setDifficulty(''); setStatus('');}}>
-              🌐 Web Development
+            <button className="preset-chip" onClick={() => {setSpecialization('Network'); setCategory('Networking'); setYear(''); setSemester(''); setDifficulty(''); setStatus('');}}>
+              🌐 Network Specialization
             </button>
-            <button className="preset-chip" onClick={() => {setDifficulty('Easy'); setFaculty(''); setCourse(''); setCategory(''); setStatus('');}}>
-              🟢 Easy Level
-            </button>
-            <button className="preset-chip" onClick={() => {setStatus('New'); setFaculty(''); setCourse(''); setCategory(''); setDifficulty('');}}>
-              ✨ New Projects
-            </button>
-            <button className="preset-chip" onClick={() => {setFaculty('Data Science'); setCourse(''); setCategory(''); setDifficulty(''); setStatus('');}}>
+            <button className="preset-chip" onClick={() => {setSpecialization('Data Science'); setCategory('Data Science'); setYear(''); setSemester(''); setDifficulty(''); setStatus('');}}>
               📊 Data Science
+            </button>
+            <button className="preset-chip" onClick={() => {setSpecialization('Cyber Security'); setCategory('Cyber Security'); setYear(''); setSemester(''); setDifficulty(''); setStatus('');}}>
+              🔒 Cyber Security
+            </button>
+            <button className="preset-chip" onClick={() => {setYear('Year 4'); setSemester(''); setSpecialization(''); setCategory(''); setDifficulty(''); setStatus('');}}>
+              🎓 Final Year Projects
             </button>
           </div>
         </div>
 
         {/* Filters */}
         <div className="filters">
+          {/* Academic Year Filter */}
           <div className="filter-group">
             <label>
-              <span className="filter-icon">🏛️</span>
-              Faculty
-              {faculty && <span className="filter-badge active">1</span>}
+              <span className="filter-icon">📅</span>
+              Academic Year
+              {year && <span className="filter-badge active">1</span>}
             </label>
-            <select value={faculty} onChange={e=>{setFaculty(e.target.value); setCourse('');}}>
-              <option value="">Specializations</option>
-              {filterOptions?.faculties?.map(f => (
-                <option key={f} value={f}>{f} ({filterOptions.counts?.byFaculty?.[f] || 0})</option>
-              )) || (
-                <>
-                  <option>IT</option>
-                  <option>SE</option>
-                  <option>Data Science</option>
-                  <option>Cyber</option>
-                  <option>Network</option>
-                </>
-              )}
-            </select>
-            {validationErrors.faculty && <div className="validation-error small">{validationErrors.faculty}</div>}
-          </div>
-
-          <div className="filter-group">
-            <label>
-              <span className="filter-icon">📚</span>
-              Course
-              {course && <span className="filter-badge active">1</span>}
-            </label>
-            <select value={course} onChange={e=>setCourse(e.target.value)} disabled={!faculty}>
-              <option value="">{faculty ? 'All Courses' : 'Select Faculty First'}</option>
-              {getAvailableCourses().map(c => (
-                <option key={c} value={c}>{c} ({filterOptions?.counts?.byCourse?.[c] || 0})</option>
+            <select value={year} onChange={e=>{setYear(e.target.value); setSemester(''); setSubject('');}}>
+              <option value="">All Years</option>
+              {VALIDATION.VALID_YEARS.map(y => (
+                <option key={y} value={y}>{y}</option>
               ))}
             </select>
-            {!faculty && <span className="filter-hint">Choose a faculty first</span>}
-            {validationErrors.course && <div className="validation-error small">{validationErrors.course}</div>}
+          </div>
+
+          {/* Semester Filter */}
+          <div className="filter-group">
+            <label>
+              <span className="filter-icon">📆</span>
+              Semester
+              {semester && <span className="filter-badge active">1</span>}
+            </label>
+            <select value={semester} onChange={e=>{setSemester(e.target.value); setSubject('');}} disabled={!year}>
+              <option value="">{year ? 'All Semesters' : 'Select Year First'}</option>
+              {getAvailableSemesters().map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            {!year && <span className="filter-hint">Choose a year first</span>}
+          </div>
+
+          {/* Specialization Filter */}
+          <div className="filter-group">
+            <label>
+              <span className="filter-icon">🎓</span>
+              Specialization
+              {specialization && <span className="filter-badge active">1</span>}
+            </label>
+            <select 
+              value={specialization} 
+              onChange={e=>{
+                const selectedSpec = e.target.value;
+                setSpecialization(selectedSpec);
+                // Auto-set category based on specialization
+                if(selectedSpec && SPECIALIZATION_TO_CATEGORY[selectedSpec]) {
+                  setCategory(SPECIALIZATION_TO_CATEGORY[selectedSpec]);
+                } else {
+                  setCategory('');
+                }
+              }} 
+              disabled={!semester}
+            >
+              <option value="">{semester ? 'All Specializations' : 'Select Semester First'}</option>
+              {getAvailableSpecializations().map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+            {!semester && <span className="filter-hint">Choose a semester first</span>}
           </div>
 
           <div className="filter-group">
@@ -745,8 +762,16 @@ export default function App(){
               Category
               {category && <span className="filter-badge active">1</span>}
             </label>
-            <select value={category} onChange={e=>setCategory(e.target.value)}>
-              <option value="">All Categories</option>
+            <select 
+              value={category} 
+              onChange={e=>setCategory(e.target.value)}
+              disabled={!!specialization}
+            >
+              <option value="">
+                {specialization 
+                  ? `Auto: ${SPECIALIZATION_TO_CATEGORY[specialization] || 'All Categories'}` 
+                  : 'All Categories'}
+              </option>
               {filterOptions?.categories?.map(c => (
                 <option key={c} value={c}>{c} ({filterOptions.counts?.byCategory?.[c] || 0})</option>
               )) || (
@@ -763,7 +788,7 @@ export default function App(){
                 </>
               )}
             </select>
-            {validationErrors.category && <div className="validation-error small">{validationErrors.category}</div>}
+            {specialization && <span className="filter-hint">Category auto-set from specialization</span>}
           </div>
 
           <div className="filter-group">
@@ -778,7 +803,6 @@ export default function App(){
               <option value="Medium">🟡 Medium</option>
               <option value="Hard">🔴 Hard</option>
             </select>
-            {validationErrors.difficulty && <div className="validation-error small">{validationErrors.difficulty}</div>}
           </div>
 
           <div className="filter-group">
@@ -793,7 +817,6 @@ export default function App(){
               <option value="Approved">✅ Approved</option>
               <option value="Completed">🏆 Completed</option>
             </select>
-            {validationErrors.status && <div className="validation-error small">{validationErrors.status}</div>}
           </div>
 
           <div className="filter-group">
@@ -884,10 +907,18 @@ export default function App(){
               <span className="status-text">Page <strong>{page}</strong> of <strong>{totalPages}</strong></span>
             </div>
           )}
-          {(keyword || faculty || course || category || difficulty || status) && (
+          {(keyword || year || semester || specialization || category || difficulty || status) && (
             <div className="status-item filters-active">
               <span className="status-icon">🔍</span>
               <span className="status-text">Filters Active</span>
+            </div>
+          )}
+          
+          {/* Academic Filter Path Display */}
+          {getAcademicFilterPath() && (
+            <div className="status-item academic-path">
+              <span className="status-icon">🎓</span>
+              <span className="status-text">{getAcademicFilterPath()}</span>
             </div>
           )}
         </div>
@@ -986,8 +1017,9 @@ export default function App(){
                   </div>
                   <p className="project-description" onClick={() => openQuickView(p)}>{p.description}</p>
                   <div className="project-meta">
-                    <span className="badge faculty">{p.faculty}</span>
-                    <span className="badge course">{p.course}</span>
+                    <span className="badge year">{p.year}</span>
+                    <span className="badge semester">{p.semester}</span>
+                    <span className="badge subject">{p.subject}</span>
                     <span className="badge category">{p.category}</span>
                     <span className={`badge difficulty difficulty-${p.difficulty.toLowerCase()}`}>
                       {p.difficulty}
@@ -1054,8 +1086,9 @@ export default function App(){
               <h2>{quickView.title}</h2>
               <div className="quick-view-meta">
                 <span className={`badge status-${quickView.status.toLowerCase()}`}>{quickView.status}</span>
-                <span className="badge faculty">{quickView.faculty}</span>
-                <span className="badge course">{quickView.course}</span>
+                <span className="badge year">{quickView.year}</span>
+                <span className="badge semester">{quickView.semester}</span>
+                <span className="badge subject">{quickView.subject}</span>
                 <span className={`badge difficulty-${quickView.difficulty.toLowerCase()}`}>{quickView.difficulty}</span>
               </div>
               <p className="quick-view-description">{quickView.description}</p>
