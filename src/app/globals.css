@@ -26,7 +26,7 @@
 
 @layer base {
   body {
-    background-color: var(--color-red-200, #fecaca);
+    background-color: #FFF8F3;
     color: var(--color-darkPrimary);
   }
 }

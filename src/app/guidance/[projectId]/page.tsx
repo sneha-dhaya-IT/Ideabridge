@@ -9,7 +9,7 @@ export default async function GuidancePage({ params }: PageProps) {
   const initialComments = await fetchCommentsByProjectId(params.projectId);
 
   return (
-    <main className="min-h-screen bg-slateLight px-4 py-10">
+    <main className="min-h-screen bg-gradient-to-br from-red-100 to-slateLight px-4 py-10">
       <div className="mx-auto w-full max-w-3xl space-y-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold tracking-tight text-darkPrimary">
