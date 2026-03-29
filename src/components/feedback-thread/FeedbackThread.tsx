@@ -21,7 +21,7 @@ export default function FeedbackThread({
 
   if (tree.length === 0) {
     return (
-      <p className="text-sm text-blue-700">No comments yet — be the first!</p>
+      <p className="text-sm text-slateText">No comments yet — be the first!</p>
     );
   }
 

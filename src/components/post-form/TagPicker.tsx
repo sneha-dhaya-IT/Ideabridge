@@ -19,8 +19,8 @@ export function TagPicker({ name, label, defaultValue }: TagPickerProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between gap-4">
-        <label className="text-sm font-medium text-blue-950">{label}</label>
-        <span className="text-xs text-blue-700">{selectedArray.length} selected</span>
+        <label className="text-sm font-medium text-darkPrimary">{label}</label>
+        <span className="text-xs text-slateText">{selectedArray.length} selected</span>
       </div>
 
       <input type="hidden" name={name} value={JSON.stringify(selectedArray)} />
@@ -43,8 +43,8 @@ export function TagPicker({ name, label, defaultValue }: TagPickerProps) {
               className={
                 "rounded-full border px-3 py-1 text-sm transition-colors " +
                 (isSelected
-                  ? "border-blue-800 bg-blue-800 text-white"
-                  : "border-blue-200 bg-white text-blue-950 hover:bg-blue-50")
+                  ? "border-goldPrimary bg-goldPrimary text-darkPrimary"
+                  : "border-darkSecondary/20 bg-white text-darkSecondary hover:bg-slateLight")
               }
               aria-pressed={isSelected}
             >
@@ -54,7 +54,7 @@ export function TagPicker({ name, label, defaultValue }: TagPickerProps) {
         })}
       </div>
 
-      <p className="text-xs text-blue-700">
+      <p className="text-xs text-slateText">
         Pick the tech stacks relevant to your post.
       </p>
     </div>

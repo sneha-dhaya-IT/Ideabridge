@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@theme {
+  --color-darkPrimary: #0F0F0F;
+  --color-darkSecondary: #1A1A2E;
+  --color-darkTertiary: #1c0f00;
+  --color-darkQuaternary: #2a1200;
+  
+  --color-goldPrimary: #FFCBA4;
+  --color-goldSecondary: #F5A97F;
+  
+  --color-amberStart: #F59E0B;
+  --color-amberEnd: #F97316;
+  
+  --color-emeraldStart: #10B981;
+  --color-tealEnd: #14B8A6;
+  
+  --color-slateLight: #F1F5F9;
+  --color-slateText: #6B7280;
+
+  --background-hero-gradient: linear-gradient(135deg, #0F0F0F, #1c0f00, #2a1200);
+  --background-amber-gradient: linear-gradient(to right, #F59E0B, #F97316);
+  --background-emerald-gradient: linear-gradient(to right, #10B981, #14B8A6);
+  --background-gold-gradient: linear-gradient(to right, #FFCBA4, #F5A97F);
+}
+
+@layer base {
+  body {
+    background-color: #FFF8F3;
+    color: var(--color-darkPrimary);
+  }
+}

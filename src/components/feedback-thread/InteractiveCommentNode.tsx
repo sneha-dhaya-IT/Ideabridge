@@ -45,31 +45,31 @@ export function InteractiveCommentNode({
   return (
     <div
       className={
-        "relative " + (depth > 0 ? "ml-6 border-l-2 border-blue-100 pl-4" : "")
+        "relative " + (depth > 0 ? "ml-6 border-l-2 border-darkSecondary/10 pl-4" : "")
       }
     >
-      <div className="rounded-lg border border-blue-100 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-darkSecondary/10 bg-white p-4 shadow-sm">
         {/* ── Header ─────────────────────────────── */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-blue-950">
+          <span className="text-sm font-semibold text-darkPrimary">
             {node.author}
           </span>
 
           {isMentor && (
-            <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+            <span className="inline-flex items-center rounded-full bg-amberStart/20 px-2 py-0.5 text-xs font-medium text-amber-800">
               Mentor
             </span>
           )}
 
           {node.role === "poster" && (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+            <span className="inline-flex items-center rounded-full bg-goldPrimary/30 px-2 py-0.5 text-xs font-medium text-darkSecondary">
               OP
             </span>
           )}
         </div>
 
         {/* ── Markdown body ──────────────────────── */}
-        <div className="prose prose-sm prose-blue mt-2 max-w-none text-blue-950">
+        <div className="prose prose-sm prose-slate mt-2 max-w-none text-darkPrimary">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -92,7 +92,7 @@ export function InteractiveCommentNode({
 
                 return (
                   <code
-                    className="rounded bg-blue-50 px-1 py-0.5 text-sm"
+                    className="rounded bg-slateLight px-1 py-0.5 text-sm"
                     {...rest}
                   >
                     {children}
@@ -113,8 +113,8 @@ export function InteractiveCommentNode({
             className={
               "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors " +
               (upvoted
-                ? "border-blue-800 bg-blue-800 text-white"
-                : "border-blue-200 text-blue-700 hover:bg-blue-50")
+                ? "border-goldPrimary bg-goldPrimary text-darkPrimary"
+                : "border-darkSecondary/20 text-slateText hover:bg-slateLight")
             }
             aria-pressed={upvoted}
           >
@@ -129,8 +129,8 @@ export function InteractiveCommentNode({
               className={
                 "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors " +
                 (accepted
-                  ? "border-green-700 bg-green-700 text-white"
-                  : "border-blue-200 text-blue-700 hover:bg-blue-50")
+                  ? "border-emeraldStart bg-emeraldStart text-white"
+                  : "border-darkSecondary/20 text-slateText hover:bg-slateLight")
               }
               aria-pressed={accepted}
             >
@@ -142,7 +142,7 @@ export function InteractiveCommentNode({
           <button
             type="button"
             onClick={() => setShowReplyForm((v) => !v)}
-            className="inline-flex items-center gap-1 rounded-md border border-blue-200 px-2 py-1 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-50"
+            className="inline-flex items-center gap-1 rounded-md border border-darkSecondary/20 px-2 py-1 text-xs font-medium text-slateText transition-colors hover:bg-slateLight"
           >
             <ReplyIcon />
             {showReplyForm ? "Cancel" : "Reply"}
@@ -151,19 +151,19 @@ export function InteractiveCommentNode({
 
         {/* ── Reply form ─────────────────────────── */}
         {showReplyForm && (
-          <form onSubmit={handleReply} className="mt-3 space-y-2 border-t border-blue-50 pt-3">
+          <form onSubmit={handleReply} className="mt-3 space-y-2 border-t border-darkSecondary/10 pt-3">
             <div className="flex gap-2">
               <input
                 type="text"
                 value={replyAuthor}
                 onChange={(e) => setReplyAuthor(e.target.value)}
                 placeholder="Your name"
-                className="w-32 rounded-md border border-blue-200 bg-blue-50/50 px-2 py-1.5 text-xs text-blue-950 placeholder:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-32 rounded-md border border-darkSecondary/20 bg-slateLight/50 px-2 py-1.5 text-xs text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
               />
               <select
                 value={replyRole}
                 onChange={(e) => setReplyRole(e.target.value as Comment["role"])}
-                className="rounded-md border border-blue-200 bg-blue-50/50 px-2 py-1.5 text-xs text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="rounded-md border border-darkSecondary/20 bg-slateLight/50 px-2 py-1.5 text-xs text-darkPrimary focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
               >
                 <option value="student">Student</option>
                 <option value="mentor">Mentor</option>
@@ -175,14 +175,14 @@ export function InteractiveCommentNode({
               onChange={(e) => setReplyText(e.target.value)}
               rows={2}
               placeholder="Write a reply... (Markdown supported)"
-              className="w-full resize-y rounded-md border border-blue-200 bg-blue-50/50 px-2 py-1.5 text-xs text-blue-950 placeholder:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full resize-y rounded-md border border-darkSecondary/20 bg-slateLight/50 px-2 py-1.5 text-xs text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
               autoFocus
             />
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={!replyText.trim()}
-                className="rounded-md bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-800 disabled:opacity-50"
+                className="rounded-md bg-darkPrimary px-3 py-1.5 text-xs font-semibold text-goldPrimary transition-colors hover:bg-darkSecondary disabled:opacity-50"
               >
                 Post Reply
               </button>

@@ -22,35 +22,35 @@ export function GuidanceCommentNode({ node, isOP, depth = 0 }: Props) {
   return (
     <div
       className={
-        "relative " + (depth > 0 ? "ml-6 border-l-2 border-blue-100 pl-4" : "")
+        "relative " + (depth > 0 ? "ml-6 border-l-2 border-darkSecondary/10 pl-4" : "")
       }
     >
-      <div className="rounded-lg border border-blue-100 bg-white p-4 shadow-sm">
+      <div className="rounded-lg border border-darkSecondary/10 bg-white p-4 shadow-sm">
         {/* ── Header ──────────────────────────── */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-blue-950">
+          <span className="text-sm font-semibold text-darkPrimary">
             {node.author}
           </span>
 
           {isMentor && (
-            <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+            <span className="inline-flex items-center rounded-full bg-amberStart/20 px-2 py-0.5 text-xs font-medium text-amber-800">
               Mentor
             </span>
           )}
 
           {node.role === "poster" && (
-            <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+            <span className="inline-flex items-center rounded-full bg-goldPrimary/30 px-2 py-0.5 text-xs font-medium text-darkSecondary">
               OP
             </span>
           )}
 
-          <span className="ml-auto text-xs text-blue-400">
+          <span className="ml-auto text-xs text-slateText">
             {new Date(node.created_at).toLocaleDateString()}
           </span>
         </div>
 
         {/* ── Markdown body ───────────────────── */}
-        <div className="prose prose-sm prose-blue mt-2 max-w-none text-blue-950">
+        <div className="prose prose-sm prose-slate mt-2 max-w-none text-darkPrimary">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
@@ -73,7 +73,7 @@ export function GuidanceCommentNode({ node, isOP, depth = 0 }: Props) {
 
                 return (
                   <code
-                    className="rounded bg-blue-50 px-1 py-0.5 text-sm"
+                    className="rounded bg-slateLight px-1 py-0.5 text-sm"
                     {...rest}
                   >
                     {children}
@@ -94,8 +94,8 @@ export function GuidanceCommentNode({ node, isOP, depth = 0 }: Props) {
             className={
               "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors " +
               (upvoted
-                ? "border-blue-800 bg-blue-800 text-white"
-                : "border-blue-200 text-blue-700 hover:bg-blue-50")
+                ? "border-goldPrimary bg-goldPrimary text-darkPrimary"
+                : "border-darkSecondary/20 text-slateText hover:bg-slateLight")
             }
             aria-pressed={upvoted}
           >
@@ -110,8 +110,8 @@ export function GuidanceCommentNode({ node, isOP, depth = 0 }: Props) {
               className={
                 "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-medium transition-colors " +
                 (accepted
-                  ? "border-green-700 bg-green-700 text-white"
-                  : "border-blue-200 text-blue-700 hover:bg-blue-50")
+                  ? "border-emeraldStart bg-emeraldStart text-white"
+                  : "border-darkSecondary/20 text-slateText hover:bg-slateLight")
               }
               aria-pressed={accepted}
             >

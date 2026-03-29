@@ -28,7 +28,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center rounded-md bg-blue-800 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex items-center justify-center rounded-md bg-darkPrimary px-4 py-2 text-sm font-semibold text-goldPrimary transition-colors hover:bg-darkSecondary disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Submitting…" : "Submit Idea"}
     </button>
@@ -42,8 +42,8 @@ function UrlListInput({ errors }: { errors: string[] }) {
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between gap-4">
-        <label className="text-sm font-medium text-blue-950">URLs</label>
-        <span className="text-xs text-blue-700">{nonEmpty.length} added</span>
+        <label className="text-sm font-medium text-darkPrimary">URLs</label>
+        <span className="text-xs text-slateText">{nonEmpty.length} added</span>
       </div>
 
       <input type="hidden" name="urls" value={JSON.stringify(nonEmpty)} />
@@ -59,13 +59,13 @@ function UrlListInput({ errors }: { errors: string[] }) {
               setUrls(next);
             }}
             placeholder="https://…"
-            className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-950 placeholder:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {urls.length > 1 && (
             <button
               type="button"
               onClick={() => setUrls(urls.filter((_, j) => j !== i))}
-              className="rounded-md border border-blue-200 px-2 text-sm text-red-600 hover:bg-red-50"
+              className="rounded-md border border-darkSecondary/20 px-2 text-sm text-red-600 hover:bg-red-50"
             >
               &times;
             </button>
@@ -76,7 +76,7 @@ function UrlListInput({ errors }: { errors: string[] }) {
       <button
         type="button"
         onClick={() => setUrls([...urls, ""])}
-        className="text-sm font-medium text-blue-700 hover:text-blue-900"
+        className="text-sm font-medium text-slateText hover:text-darkSecondary"
       >
         + Add another URL
       </button>
@@ -98,12 +98,12 @@ export function PostFormClient({ action }: PostFormClientProps) {
   const variantErrors = state.ok ? [] : (state.fieldErrors?.variant ?? []);
 
   return (
-    <div className="rounded-xl border border-blue-100 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-darkSecondary/10 bg-white p-6 shadow-sm">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-blue-950">
+        <h1 className="text-2xl font-semibold tracking-tight text-darkPrimary">
           Submit a Project Idea
         </h1>
-        <p className="text-sm text-blue-700">
+        <p className="text-sm text-slateText">
           Fill in the details below. The server action validates with Zod,
           authenticates your session, and inserts into <code>project_ideas</code>.
         </p>
@@ -112,14 +112,14 @@ export function PostFormClient({ action }: PostFormClientProps) {
       <form action={formAction} className="mt-6 space-y-6">
         {/* ── Title ───────────────────────────────────── */}
         <div className="space-y-2">
-          <label htmlFor="title" className="text-sm font-medium text-blue-950">
+          <label htmlFor="title" className="text-sm font-medium text-darkPrimary">
             Title
           </label>
           <input
             id="title"
             name="title"
             placeholder="Write a descriptive title (min 10 chars)"
-            className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-950 placeholder:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {titleErrors.length > 0 ? (
             <p className="text-sm text-red-700">{titleErrors[0]}</p>
@@ -130,7 +130,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
         <div className="space-y-2">
           <label
             htmlFor="problemStatement"
-            className="text-sm font-medium text-blue-950"
+            className="text-sm font-medium text-darkPrimary"
           >
             Problem Statement
           </label>
@@ -139,7 +139,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
             name="problemStatement"
             rows={6}
             placeholder="Explain the problem clearly and concisely"
-            className="w-full resize-y rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-950 placeholder:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full resize-y rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary placeholder:text-slateText focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           />
           {problemErrors.length > 0 ? (
             <p className="text-sm text-red-700">{problemErrors[0]}</p>
@@ -148,14 +148,14 @@ export function PostFormClient({ action }: PostFormClientProps) {
 
         {/* ── Variant ────────────────────────────────── */}
         <div className="space-y-2">
-          <label htmlFor="variant" className="text-sm font-medium text-blue-950">
+          <label htmlFor="variant" className="text-sm font-medium text-darkPrimary">
             Project Variant
           </label>
           <select
             id="variant"
             name="variant"
             defaultValue=""
-            className="w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm text-blue-950 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="w-full rounded-md border border-darkSecondary/20 bg-white px-3 py-2 text-sm text-darkPrimary focus:outline-none focus:ring-2 focus:ring-goldPrimary/50"
           >
             <option value="" disabled>
               Select a variant…
@@ -181,8 +181,8 @@ export function PostFormClient({ action }: PostFormClientProps) {
           <p className="text-sm text-red-700">{state.formError}</p>
         ) : null}
 
-        <div className="flex items-center justify-between gap-4 border-t border-blue-100 pt-4">
-          <p className="text-xs text-blue-700">
+        <div className="flex items-center justify-between gap-4 border-t border-darkSecondary/10 pt-4">
+          <p className="text-xs text-slateText">
             Authenticated server action &rarr; Supabase insert &rarr; revalidatePath
           </p>
           <SubmitButton />
@@ -195,7 +195,7 @@ export function PostFormClient({ action }: PostFormClientProps) {
           <h2 className="text-sm font-semibold text-green-900">
             {state.message}
           </h2>
-          <pre className="mt-3 overflow-x-auto rounded-md bg-white p-3 text-xs text-blue-950">
+          <pre className="mt-3 overflow-x-auto rounded-md bg-white p-3 text-xs text-darkPrimary">
             {JSON.stringify(state.insertedRow, null, 2)}
           </pre>
         </div>

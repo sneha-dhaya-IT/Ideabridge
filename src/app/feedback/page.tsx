@@ -47,13 +47,13 @@ const sampleComments: Comment[] = [
 
 export default function FeedbackPage() {
   return (
-    <main className="min-h-screen bg-blue-50 px-4 py-10">
+    <main className="min-h-screen bg-slateLight px-4 py-10">
       <div className="mx-auto w-full max-w-3xl space-y-4">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-blue-950">
+          <h1 className="text-2xl font-semibold tracking-tight text-darkPrimary">
             Feedback Threads
           </h1>
-          <p className="text-sm text-blue-700">
+          <p className="text-sm text-slateText">
             Interactive comment tree — add comments, reply to existing ones,
             upvote, and mark accepted. Supports Markdown and code highlighting.
           </p>

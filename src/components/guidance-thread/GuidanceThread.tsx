@@ -24,7 +24,7 @@ export default async function GuidanceThread({
 
   if (tree.length === 0) {
     return (
-      <p className="text-sm text-blue-700">
+      <p className="text-sm text-slateText">
         No guidance comments yet — be the first to reply!
       </p>
     );
