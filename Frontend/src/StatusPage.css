@@ -475,6 +475,237 @@
   transform: translateY(-2px);
 }
 
+/* Top 3 Relevant Projects Section */
+.top-projects-section {
+  margin-bottom: 32px;
+}
+
+.section-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.section-header h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #2D2420;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.section-subtitle {
+  margin: 0;
+  color: #6B5B50;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.top-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.top-project-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 30px rgba(45, 36, 32, 0.12);
+  border: 2px solid #F5E6D8;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(45, 36, 32, 0.18);
+  border-color: #F4A261;
+}
+
+/* Rank Badges */
+.rank-badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.rank-1 .rank-badge {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.rank-2 .rank-badge {
+  background: linear-gradient(135deg, #C0C0C0 0%, #A0A0A0 100%);
+}
+
+.rank-3 .rank-badge {
+  background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);
+}
+
+/* Relevance Badge */
+.relevance-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #F4A261 0%, #E89552 100%);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(244, 162, 97, 0.3);
+}
+
+.match-percentage {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.match-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.9;
+}
+
+/* Card Content */
+.project-content {
+  flex: 1;
+  margin-top: 16px;
+}
+
+.project-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2D2420;
+  line-height: 1.4;
+}
+
+.project-description {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #6B5B50;
+  line-height: 1.6;
+}
+
+/* Project Meta Tags */
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.meta-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.meta-tag.specialization {
+  background: #FFF0E6;
+  color: #E89552;
+}
+
+.meta-tag.category {
+  background: #E8F6F5;
+  color: #2A9D8F;
+}
+
+.meta-tag.status {
+  color: white;
+}
+
+.meta-tag.status-new {
+  background: linear-gradient(135deg, #F4A261 0%, #E89552 100%);
+}
+
+.meta-tag.status-approved {
+  background: linear-gradient(135deg, #2A9D8F 0%, #4ECDC4 100%);
+}
+
+.meta-tag.status-completed {
+  background: linear-gradient(135deg, #E76F51 0%, #F1948A 100%);
+}
+
+/* Academic Info */
+.project-academic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #6B5B50;
+}
+
+.academic-separator {
+  color: #F5E6D8;
+  font-weight: 700;
+}
+
+.academic-info.difficulty {
+  font-weight: 600;
+  color: #E89552;
+}
+
+/* Tags */
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.project-tags .tag {
+  padding: 4px 10px;
+  background: #FFFBF7;
+  border: 1px solid #F5E6D8;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #6B5B50;
+  font-weight: 500;
+}
+
+/* View Project Button */
+.view-project-btn {
+  margin-top: 20px;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #F4A261 0%, #E89552 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(244, 162, 97, 0.3);
+}
+
+.view-project-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(244, 162, 97, 0.4);
+}
+
 /* Footer */
 .status-footer {
   text-align: center;
@@ -494,6 +725,18 @@
     flex-direction: column;
     gap: 16px;
     text-align: center;
+  }
+
+  .top-projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+  }
+
+  .top-project-card {
+    padding: 20px;
   }
 
   .distribution-section {
